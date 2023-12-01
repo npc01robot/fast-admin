@@ -1,0 +1,17 @@
+PyMySQL==1.1.0
+mysqlclient==2.2.0
+Flask==3.0.0
+Flask-SQLAlchemy==3.1.1
+flask-restful==0.3.10
+flask_migrate==4.0.4
+flask_script==2.0.6
+requests==2.29.0
+flask-httpauth==4.8.0
+gunicorn==20.1.0
+gevent==22.10.2
+flask-cors==4.0.0
+pandas==1.5.3
+openpyxl==3.0.9
+xlsxwriter==3.1.2
+PyJWT==2.8.0
+flask-marshmallow==0.15.0
