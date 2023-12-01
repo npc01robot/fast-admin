@@ -1,4 +1,4 @@
-FROM bird:latest
+FROM x:latest
 MAINTAINER Robot
 
 WORKDIR /code

@@ -14,8 +14,8 @@ SQLALCHEMY_DATABASE_URI = "{}+{}://{}:{}@{}:{}/{}?charset=utf8".format(DIALECT,D
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SQLALCHEMY_ECHO = True
 
-SECRET_KEY = 'k#S6@1%8)a#D5WS01'
-JWT_SECRET = 'Sui98^se25Jsc0361'
+SECRET_KEY = 'xxxx'  # 实际开发请替换
+JWT_SECRET = 'xxxx'  # 实际开发请替换
 JWT_REFRESH_DAYS = 7 # jwt refresh
 JWT_EXPIRY_HOURS = 2 # jwt token
 # Flask Bcrypt Setting
