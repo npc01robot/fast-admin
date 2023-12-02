@@ -28,7 +28,7 @@ class Responser:
         return jsonify(wrapper)
 
     @staticmethod
-    def response_error(msg='server error', code=status.HTTP_500_INTERNAL_SERVER_ERROR):
+    def response_error(msg='server error', code=status.HTTP_400_BAD_REQUEST):
         """
         返回系统错误
         :param msg: 错误信息
@@ -38,7 +38,7 @@ class Responser:
         if type(msg) is not str:
             joined_message = ''
             for err in msg:
-                joined_message = ', '.join(msg[err])
+                joined_message += err +'--'+ ', '.join(msg[err])
             msg = joined_message
         wrapper = {
             'code': code,
