@@ -1,12 +1,13 @@
 from flask import g, request
-from flask_restful import Resource, reqparse
+from flask_restful import Resource
 from marshmallow import ValidationError
 
-from apps.auth.views.authschema import UserSchema
+from apps.auth.views.authschema import UserSchema, SignSchema
 from apps.utils.jwt_util import generate_tokens
 from apps.utils.middlewares import verify_jwt
 from apps.utils.responser import Responser
 from apps.utils.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK
+
 
 # class Auth(Resource):
 #     """
@@ -16,42 +17,41 @@ from apps.utils.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_O
 #         'put': [login_required]
 #     }
 
-schema = UserSchema()
-
 
 class Login(Resource):
     """
        登录
    """
-    parser = reqparse.RequestParser()
-    parser.add_argument('Login', type=str, required=True, help="Every store needs a name.")
+    schema = UserSchema()
 
     def post(self):
-
-        data = self.parser.parse_args()
+        data = request.json
         try:
             # 使用 Marshmallow 的 Schema 来验证数据
-            user = schema.load(data)
-            token, refresh_token, expire_time = generate_tokens(user['username'])
-            result = {'accessToken': token, 'refreshToken': refresh_token, "username": user['username'],
-                      "expires": expire_time, "roles": ["admin"]}
+            user = self.schema.load(data)
+            token, refresh_token, expire_time = generate_tokens(user.username)
+            result = {'accessToken': token,
+                      'refreshToken': refresh_token,
+                      "username": user.username,
+                      "expires": expire_time,
+                      "roles": user.roles,
+                      "auths": user.auths}
             return Responser.response_success(code=HTTP_201_CREATED, data=result)
-
         except ValidationError as err:
-            return Responser.response_error(msg=err.messages, code=HTTP_400_BAD_REQUEST)
+            return Responser.response_error(msg=err.messages, code=401)
 
 
 class Sign(Resource):
     """
     注册
     """
-    parser = reqparse.RequestParser()
-    parser.add_argument('Sign', type=str, required=True, help="Every store needs a name.")
+
+    schema = SignSchema()
 
     def post(self):
-        data = self.parser.parse_args()
+        params = request.json
         try:
-            schema.create_user(data)
+            self.schema.load(params)
             return Responser.response_success(code=HTTP_200_OK, msg='注册成功！')
         except ValidationError as err:
             return Responser.response_error(msg=err.messages, code=HTTP_400_BAD_REQUEST)

@@ -12,8 +12,8 @@ class LogonUser(db.Model):
     __tablename__ = 'logon_user'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String(80), unique=True, nullable=False)
-    hash_password = Column(String(120), nullable=False, comment='密码')
+    username = Column(String(150), unique=True, nullable=False)
+    hash_password = Column(String(255), nullable=False, comment='密码')
     phone = Column(String(20), nullable=False, comment='手机号')
     email = Column(String(20), nullable=True, comment='邮箱')
     roles = Column(JSON, default=['common'], nullable=False,
@@ -26,9 +26,9 @@ class LogonUser(db.Model):
     is_lock = Column(Boolean, default=False, nullable=False, comment='是否删除该用户')
 
     # 初始化
-    def __init__(self, username, hash_password, phone, email=None, auths=None, roles='others'):
+    def __init__(self, username, password, phone, email='', auths=[], roles=['common']):
         self.username = username
-        self.password = hash_password
+        self.password = password
         self.phone = phone
         self.email = email
         self.auths = auths
@@ -62,3 +62,7 @@ class LogonUser(db.Model):
     # 检查密码是否正确
     def check_password(self, password):
         return check_password_hash(self.hash_password, password)
+
+    def update_login_date(self):
+        self.login_date = datetime.now()
+        self.update()

@@ -35,6 +35,11 @@ class Responser:
         :param code: 错误码
         :return:
         """
+        if type(msg) is not str:
+            joined_message = ''
+            for err in msg:
+                joined_message = ', '.join(msg[err])
+            msg = joined_message
         wrapper = {
             'code': code,
             'msg': msg,
