@@ -2,8 +2,8 @@ from flask_cors import CORS
 
 from flask import Flask  # flask
 from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
 
+from apps.models import db
 from config.routes import register_routes
 from apps.utils.middlewares import jwt_authentication
 from config import config
@@ -20,8 +20,7 @@ app.before_request(jwt_authentication)
 # url
 register_routes(app)
 # 数据库迁移相关
-db = SQLAlchemy(app)
+db.init_app(app)
 # 需要将每个app下面的models在这个地方引用一下
-from .auth.models import LogonUser
 
 migrate = Migrate(app, db)

@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from sqlalchemy import Column, String, Integer, Enum, DateTime, Boolean, func, JSON
+from sqlalchemy import Column, String, Integer, DateTime, Boolean, func, JSON
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from apps import db
+from apps.models import db
 
 
 class LogonUser(db.Model):
@@ -25,6 +25,7 @@ class LogonUser(db.Model):
                         onupdate=func.now())
     is_lock = Column(Boolean, default=False, nullable=False, comment='是否删除该用户')
 
+    # 初始化
     def __init__(self, username, hash_password, phone, email=None, auths=None, roles='others'):
         self.username = username
         self.password = hash_password
@@ -45,11 +46,19 @@ class LogonUser(db.Model):
     def password(self, value):
         self.hash_password = generate_password_hash(value)
 
-    # 检查密码是否正确
-    def check_password(self, password):
-        return check_password_hash(self.hash_password, password)
+    '''------------------------------------------用户操作-----------------------------------------'''
 
+    # 更新
     def update(self):
         self.update_at = datetime.now()
         db.session.add(self)
         db.session.commit()
+
+    # 删除
+    def delete(self):
+        self.is_lock = True
+        self.update()
+
+    # 检查密码是否正确
+    def check_password(self, password):
+        return check_password_hash(self.hash_password, password)

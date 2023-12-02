@@ -1,14 +1,12 @@
 from flask import g, request
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 from marshmallow import ValidationError
 
 from apps.auth.views.authschema import UserSchema
-from apps.utils.decorator import login_required
 from apps.utils.jwt_util import generate_tokens
 from apps.utils.middlewares import verify_jwt
 from apps.utils.responser import Responser
-from apps.utils.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
-
+from apps.utils.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK
 
 # class Auth(Resource):
 #     """
@@ -18,42 +16,43 @@ from apps.utils.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
 #         'put': [login_required]
 #     }
 
-
-class Login(Resource):
-    """
-       认证
-       """
-
-    def post(self):
-        data = request.json
-        schema = UserSchema()
-        try:
-            # 使用 Marshmallow 的 Schema 来验证数据
-            result = schema.load(data)
-            token, refresh_token, expire_time = generate_tokens(result['username'])
-            result = {'accessToken': token, 'refreshToken': refresh_token, "expires": expire_time, "roles": ['admin'], "auths": ["btn_add", "btn_edit", "btn_delete"]}
-            return Responser.response_success(code=HTTP_201_CREATED, data=result)
-
-        except ValidationError as err:
-            return Responser.response_error(msg=err.messages, code=HTTP_400_BAD_REQUEST)
+schema = UserSchema()
 
 
 class Login(Resource):
     """
        登录
    """
+    parser = reqparse.RequestParser()
+    parser.add_argument('Login', type=str, required=True, help="Every store needs a name.")
 
     def post(self):
-        data = request.json
-        schema = UserSchema()
+
+        data = self.parser.parse_args()
         try:
             # 使用 Marshmallow 的 Schema 来验证数据
-            result = schema.load(data)
-            token, refresh_token, expire_time = generate_tokens(result['username'])
-            result = {'accessToken': token, 'refreshToken': refresh_token, "username": result['username'],
+            user = schema.load(data)
+            token, refresh_token, expire_time = generate_tokens(user['username'])
+            result = {'accessToken': token, 'refreshToken': refresh_token, "username": user['username'],
                       "expires": expire_time, "roles": ["admin"]}
             return Responser.response_success(code=HTTP_201_CREATED, data=result)
 
+        except ValidationError as err:
+            return Responser.response_error(msg=err.messages, code=HTTP_400_BAD_REQUEST)
+
+
+class Sign(Resource):
+    """
+    注册
+    """
+    parser = reqparse.RequestParser()
+    parser.add_argument('Sign', type=str, required=True, help="Every store needs a name.")
+
+    def post(self):
+        data = self.parser.parse_args()
+        try:
+            schema.create_user(data)
+            return Responser.response_success(code=HTTP_200_OK, msg='注册成功！')
         except ValidationError as err:
             return Responser.response_error(msg=err.messages, code=HTTP_400_BAD_REQUEST)
 
@@ -67,6 +66,7 @@ class RefreshToken(Resource):
     2.用户必须登录g.username , 必须携带刷新token不允许携带业务token
     3.客户端请求参数 刷新token
     """
+
     # method_decorators = {
     #     'post': [login_required]
     # }

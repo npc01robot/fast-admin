@@ -41,8 +41,9 @@
 - run.py      # 启动入口
 - apps
   - __init__.py  # 配置入口
+  - models.py      # 防止循环引入报错
   - auth        # app1
-    - models.py # app1 models
+    - models# app1 models文件
     - urls.py  # app1 url
     - __init__.py
     - views  # 视图文件
@@ -96,8 +97,6 @@ def register_routes(app):
 需设置环境变量为`$env:FLASK_APP='run.py'`
 
 做数据迁移初始化`flask db init` 项目周期内只需运行一次
-
-如果新增model 需在apps的配置项中添加，具体见__init__.py 该文件
 
 新增model之后需做 `flask db migrate -m 'create init models'` 做数据迁移
 
