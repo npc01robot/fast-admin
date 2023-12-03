@@ -71,6 +71,3 @@ class WeChatLogon(Resource):
             return Responser.response_success(data=res)
         except ValidationError as err:
             return Responser.response_error(msg=err.messages, code=HTTP_400_BAD_REQUEST)
-
-    def list(self):
-        pass
