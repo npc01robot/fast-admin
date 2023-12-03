@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { storageSession } from "@pureadmin/utils";
+import { storageLocal, storageSession } from "@pureadmin/utils";
 import { useUserStoreHook } from "@/store/modules/user";
 
 export interface DataInfo<T> {
@@ -17,6 +17,13 @@ export interface DataInfo<T> {
 
 export const sessionKey = "user-info";
 export const TokenKey = "authorized-token";
+/**
+ * 通过`multiple-tabs`是否在`cookie`中，判断用户是否已经登录系统，
+ * 从而支持多标签页打开已经登录的系统后无需再登录。
+ * 浏览器完全关闭后`multiple-tabs`将自动从`cookie`中销毁，
+ * 再次打开浏览器需要重新登录系统
+ * */
+export const multipleTabsKey = "multiple-tabs";
 
 /** 获取`token` */
 export function getToken(): DataInfo<number> {
@@ -35,6 +42,7 @@ export function getToken(): DataInfo<number> {
 export function setToken(data: DataInfo<Date>) {
   let expires = 0;
   const { accessToken, refreshToken } = data;
+  const { isRemembered, loginDay } = useUserStoreHook();
   expires = new Date(data.expires).getTime(); // 如果后端直接设置时间戳，将此处代码改为expires = data.expires，然后把上面的DataInfo<Date>改成DataInfo<number>即可
   const cookieString = JSON.stringify({ accessToken, expires });
 
@@ -43,6 +51,16 @@ export function setToken(data: DataInfo<Date>) {
         expires: (expires - Date.now()) / 86400000
       })
     : Cookies.set(TokenKey, cookieString);
+
+  Cookies.set(
+    multipleTabsKey,
+    "true",
+    isRemembered
+      ? {
+          expires: loginDay
+        }
+      : {}
+  );
 
   function setSessionKey(username: string, roles: Array<string>) {
     useUserStoreHook().SET_USERNAME(username);
@@ -70,6 +88,8 @@ export function setToken(data: DataInfo<Date>) {
 /** 删除`token`以及key值为`user-info`的session信息 */
 export function removeToken() {
   Cookies.remove(TokenKey);
+  Cookies.remove(multipleTabsKey);
+  storageLocal().removeItem(sessionKey);
   sessionStorage.clear();
 }
 

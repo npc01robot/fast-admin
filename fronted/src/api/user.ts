@@ -15,6 +15,8 @@ export type UserResult = {
     /** `accessToken`的过期时间（格式'xxxx/xx/xx xx:xx:xx'） */
     expires: Date;
   };
+  /** 存放一些信息 */
+  msg: String;
 };
 
 export type RefreshTokenResult = {
@@ -27,6 +29,8 @@ export type RefreshTokenResult = {
     /** `accessToken`的过期时间（格式'xxxx/xx/xx xx:xx:xx'） */
     expires: Date;
   };
+  /** 存放一些信息 */
+  msg: String;
 };
 
 /** 登录 */
