@@ -7,16 +7,20 @@ import { useVerifyCode } from "../utils/verifyCode";
 import Lock from "@iconify-icons/ri/lock-fill";
 import Iphone from "@iconify-icons/ep/iphone";
 import User from "@iconify-icons/ri/user-3-fill";
+
 import { message } from "@/utils/message";
 import { useUserStoreHook } from "@/store/modules/user";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import { getTopMenu, initRouter } from "@/router/utils";
+import router from "@/router";
 
 const checked = ref(false);
 const loading = ref(false);
 const ruleForm = reactive({
   username: "",
   phone: "",
-  verifyCode: "",
+  // verifyCode: "",
+  email: "",
   password: "",
   repeatPassword: ""
 });
@@ -43,13 +47,26 @@ const onUpdate = async (formEl: FormInstance | undefined) => {
   await formEl.validate((valid, fields) => {
     if (valid) {
       if (checked.value) {
-        // 模拟请求，需根据实际开发进行修改
-        setTimeout(() => {
-          message("注册成功", {
-            type: "success"
+        useUserStoreHook()
+          .signByUsername({
+            username: ruleForm.username,
+            password: ruleForm.password,
+            phone: ruleForm.phone,
+            email: ruleForm.email
+          })
+          .then(res => {
+            if (res.success) {
+              // 获取后端路由
+              initRouter().then(() => {
+                router.push(getTopMenu(true).path);
+                message("登录成功", { type: "success" });
+              });
+            } else {
+              loading.value = false;
+              message("登录失败!" + " " + res.msg, { type: "error" });
+            }
           });
-          loading.value = false;
-        }, 2000);
+        loading.value = false;
       } else {
         loading.value = false;
         message("请勾选隐私政策", { type: "warning" });
@@ -105,23 +122,33 @@ function onBack() {
       </el-form-item>
     </Motion>
 
+<!--    <Motion :delay="150">-->
+<!--      <el-form-item prop="verifyCode">-->
+<!--        <div class="w-full flex justify-between">-->
+<!--          <el-input-->
+<!--            v-model="ruleForm.verifyCode"-->
+<!--            clearable-->
+<!--            placeholder="短信验证码"-->
+<!--            :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"-->
+<!--          />-->
+<!--          <el-button-->
+<!--            :disabled="isDisabled"-->
+<!--            class="ml-2"-->
+<!--            @click="useVerifyCode().start(ruleFormRef, 'phone')"-->
+<!--          >-->
+<!--            {{ text.length > 0 ? text + "秒后重新获取" : "获取验证码" }}-->
+<!--          </el-button>-->
+<!--        </div>-->
+<!--      </el-form-item>-->
+<!--    </Motion>-->
     <Motion :delay="150">
-      <el-form-item prop="verifyCode">
-        <div class="w-full flex justify-between">
-          <el-input
-            v-model="ruleForm.verifyCode"
-            clearable
-            placeholder="短信验证码"
-            :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
-          />
-          <el-button
-            :disabled="isDisabled"
-            class="ml-2"
-            @click="useVerifyCode().start(ruleFormRef, 'phone')"
-          >
-            {{ text.length > 0 ? text + "秒后重新获取" : "获取验证码" }}
-          </el-button>
-        </div>
+      <el-form-item prop="email">
+        <el-input
+          v-model="ruleForm.email"
+          clearable
+          placeholder="邮箱"
+          :prefix-icon="useRenderIcon('ep:message')"
+        />
       </el-form-item>
     </Motion>
 

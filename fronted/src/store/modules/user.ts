@@ -4,7 +4,7 @@ import type { userType } from "./types";
 import { routerArrays } from "@/layout/types";
 import { router, resetRouter } from "@/router";
 import { storageSession } from "@pureadmin/utils";
-import { getLogin, refreshTokenApi } from "@/api/user";
+import {getLogin, refreshTokenApi, sign} from "@/api/user";
 import type { UserResult, RefreshTokenResult } from "@/api/user";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { type DataInfo, setToken, removeToken, sessionKey } from "@/utils/auth";
@@ -96,7 +96,21 @@ export const useUserStore = defineStore({
             reject(error);
           });
       });
-    }
+    },
+    async signByUsername(data) {
+      return new Promise<UserResult>((resolve, reject) => {
+        sign(data)
+          .then(data => {
+            if (data.success) {
+              setToken(data.data);
+            }
+            resolve(data);
+          })
+          .catch(error => {
+            reject(error);
+          });
+      });
+    },
   }
 });
 

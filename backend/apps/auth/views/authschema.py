@@ -16,6 +16,7 @@ class SignSchema(SQLAlchemySchema):
     password = fields.String(required=True)
     phone = fields.String(required=True,validate=validate.Regexp("^1[3-9]\d{9}$", error="手机号码格式不正确"),
                           error_messages={"Regexp": "手机格式不正确！"})
+    email = fields.Email()
 
     # 反序列化
     @post_load

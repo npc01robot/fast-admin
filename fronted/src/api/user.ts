@@ -46,3 +46,7 @@ export const refreshTokenApi = (data?: object) => {
     { data }
   );
 };
+
+export const sign = (data?: object) => {
+  return http.request<UserResult>("post", baseUrlApi("auth/sign"), { data });
+};

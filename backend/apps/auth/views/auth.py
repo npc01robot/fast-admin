@@ -51,8 +51,15 @@ class Sign(Resource):
     def post(self):
         params = request.json
         try:
-            self.schema.load(params)
-            return Responser.response_success(code=HTTP_200_OK, msg='注册成功！')
+            user = self.schema.load(params)
+            token, refresh_token, expire_time = generate_tokens(user.username)
+            result = {'accessToken': token,
+                      'refreshToken': refresh_token,
+                      "username": user.username,
+                      "expires": expire_time,
+                      "roles": user.roles,
+                      "auths": user.auths}
+            return Responser.response_success(code=HTTP_200_OK, msg='注册成功！',data=result)
         except ValidationError as err:
             return Responser.response_error(msg=err.messages, code=HTTP_400_BAD_REQUEST)
 
