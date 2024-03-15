@@ -66,6 +66,7 @@
 `启动 在backend下执行 python run.py`
 
 ## 开发 工作在backend
+### flask 版本
 需构建本地环境，python版本建议3.9以上
 `pip install -r requirement.txt` 下载本地环境（记得换源）
 
@@ -102,6 +103,7 @@ def register_routes(app):
 
 更新使用`flask db upgrade`
 
+### django 版本
 
 ## 维护者
 Mr.Robot
