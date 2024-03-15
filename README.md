@@ -7,7 +7,7 @@
 
 前端是基于 [vue-pure-admin](https://github.com/pure-admin/vue-pure-admin) 提炼出的架子，更适合实际项目开发，打包后的大小在全局引入 [element-plus](https://element-plus.org) 的情况下仍然低于 `2.3MB`，并且会永久同步完整版的代码。开启 `brotli` 压缩和 `cdn` 替换本地库模式后，打包大小低于 `350kb`
 
-后端是基于flask,采用flask-restful，sqlalchemy，Marshmallow，简单已开发，极易上手，项目开始未进行数据迁移。详见后端配套开发
+后端简单已开发，极易上手，项目开始未进行数据迁移。详见后端配套开发
 
 以实现双token认证，详见auth文件夹
 
@@ -104,6 +104,26 @@ def register_routes(app):
 更新使用`flask db upgrade`
 
 ### django 版本
+
+使用drf框架进行快速开发，最新版本
+目录结构为
+```
+- backend
+  - apps
+    - __init__.py
+    - models.py
+    - serializers.py
+    - views.py
+    - urls.py
+    - filters.py
+```
+开箱即用，需了解drf框架的使用方法
+数据迁移
+``` python
+python manage.py makemigrations
+python manage.py migrate
+```
+
 
 ## 维护者
 Mr.Robot
