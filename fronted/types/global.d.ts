@@ -1,11 +1,4 @@
-import type {
-  VNode,
-  FunctionalComponent,
-  PropType as VuePropType,
-  ComponentPublicInstance
-} from "vue";
 import type { ECharts } from "echarts";
-import type { IconifyIcon } from "@iconify/vue";
 import type { TableColumns } from "@pureadmin/table";
 
 /**
@@ -13,12 +6,16 @@ import type { TableColumns } from "@pureadmin/table";
  */
 declare global {
   /**
-   * 平台的名称、版本、依赖、最后构建时间的类型提示
+   * 平台的名称、版本、运行所需的`node`和`pnpm`版本、依赖、最后构建时间的类型提示
    */
   const __APP_INFO__: {
     pkg: {
       name: string;
       version: string;
+      engines: {
+        node: string;
+        pnpm: string;
+      };
       dependencies: Recordable<string>;
       devDependencies: Recordable<string>;
     };
@@ -42,6 +39,15 @@ declare global {
   }
 
   /**
+   * Document 的类型提示
+   */
+  interface Document {
+    webkitFullscreenElement?: Element;
+    mozFullScreenElement?: Element;
+    msFullscreenElement?: Element;
+  }
+
+  /**
    * 打包压缩格式的类型声明
    */
   type ViteCompression =
@@ -55,7 +61,7 @@ declare global {
 
   /**
    * 全局自定义环境变量的类型声明
-   * @see {@link https://yiming_chang.gitee.io/pure-admin-doc/pages/config/#%E5%85%B7%E4%BD%93%E9%85%8D%E7%BD%AE}
+   * @see {@link https://pure-admin.github.io/pure-admin-doc/pages/config/#%E5%85%B7%E4%BD%93%E9%85%8D%E7%BD%AE}
    */
   interface ViteEnv {
     VITE_PORT: number;
@@ -72,23 +78,27 @@ declare global {
   interface TableColumnList extends Array<TableColumns> {}
 
   /**
-   * 对应 `public/serverConfig.json` 文件的类型声明
-   * @see {@link https://yiming_chang.gitee.io/pure-admin-doc/pages/config/#serverconfig-json}
+   * 对应 `public/platform-config.json` 文件的类型声明
+   * @see {@link https://pure-admin.github.io/pure-admin-doc/pages/config/#platform-config-json}
    */
-  interface ServerConfigs {
+  interface PlatformConfigs {
     Version?: string;
     Title?: string;
     FixedHeader?: boolean;
     HiddenSideBar?: boolean;
     MultiTagsCache?: boolean;
+    MaxTagsLevel?: number;
     KeepAlive?: boolean;
     Locale?: string;
     Layout?: string;
     Theme?: string;
     DarkMode?: boolean;
+    OverallStyle?: string;
     Grey?: boolean;
     Weak?: boolean;
     HideTabs?: boolean;
+    HideFooter?: boolean;
+    Stretch?: boolean | number;
     SidebarStatus?: boolean;
     EpThemeColor?: string;
     ShowLogo?: boolean;
@@ -97,11 +107,20 @@ declare global {
     CachingAsyncRoutes?: boolean;
     TooltipEffect?: Effect;
     ResponsiveStorageNameSpace?: string;
+    MenuSearchHistory?: number;
+    MapConfigure?: {
+      amapKey?: string;
+      options: {
+        resizeEnable?: boolean;
+        center?: number[];
+        zoom?: number;
+      };
+    };
   }
 
   /**
-   * 与 `ServerConfigs` 类型不同，这里是缓存到浏览器本地存储的类型声明
-   * @see {@link https://yiming_chang.gitee.io/pure-admin-doc/pages/config/#serverconfig-json}
+   * 与 `PlatformConfigs` 类型不同，这里是缓存到浏览器本地存储的类型声明
+   * @see {@link https://pure-admin.github.io/pure-admin-doc/pages/config/#platform-config-json}
    */
   interface StorageConfigs {
     version?: string;
@@ -117,10 +136,22 @@ declare global {
     grey?: boolean;
     weak?: boolean;
     hideTabs?: boolean;
+    hideFooter?: boolean;
     sidebarStatus?: boolean;
     epThemeColor?: string;
+    themeColor?: string;
+    overallStyle?: string;
     showLogo?: boolean;
     showModel?: string;
+    menuSearchHistory?: number;
+    mapConfigure?: {
+      amapKey?: string;
+      options: {
+        resizeEnable?: boolean;
+        center?: number[];
+        zoom?: number;
+      };
+    };
     username?: string;
   }
 
@@ -137,14 +168,18 @@ declare global {
       darkMode?: boolean;
       sidebarStatus?: boolean;
       epThemeColor?: string;
+      themeColor?: string;
+      overallStyle?: string;
     };
     configure: {
       grey?: boolean;
       weak?: boolean;
       hideTabs?: boolean;
+      hideFooter?: boolean;
       showLogo?: boolean;
       showModel?: string;
       multiTagsCache?: boolean;
+      stretch?: boolean | number;
     };
     tags?: Array<any>;
   }
@@ -155,6 +190,20 @@ declare global {
   interface GlobalPropertiesApi {
     $echarts: ECharts;
     $storage: ResponsiveStorage;
-    $config: ServerConfigs;
+    $config: PlatformConfigs;
+  }
+
+  /**
+   * 扩展 `Element`
+   */
+  interface Element {
+    // v-ripple 作用于 src/directives/ripple/index.ts 文件
+    _ripple?: {
+      enabled?: boolean;
+      centered?: boolean;
+      class?: string;
+      circle?: boolean;
+      touched?: boolean;
+    };
   }
 }

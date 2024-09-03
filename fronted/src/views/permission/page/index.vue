@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { initRouter } from "@/router/utils";
-import { storageSession } from "@pureadmin/utils";
+import { storageLocal } from "@pureadmin/utils";
 import { type CSSProperties, ref, computed } from "vue";
 import { useUserStoreHook } from "@/store/modules/user";
 import { usePermissionStoreHook } from "@/store/modules/permission";
@@ -34,7 +34,7 @@ function onChange() {
     .loginByUsername({ username: username.value, password: "admin123" })
     .then(res => {
       if (res.success) {
-        storageSession().removeItem("async-routes");
+        storageLocal().removeItem("async-routes");
         usePermissionStoreHook().clearAllCachePage();
         initRouter();
       }
@@ -43,17 +43,24 @@ function onChange() {
 </script>
 
 <template>
-  <el-space direction="vertical" size="large">
-    <el-tag :style="elStyle" size="large" effect="dark">
-      模拟后台根据不同角色返回对应路由（具体参考完整版pure-admin代码）
-    </el-tag>
+  <div>
+    <p class="mb-2">
+      模拟后台根据不同角色返回对应路由，观察左侧菜单变化（管理员角色可查看系统管理菜单、普通角色不可查看系统管理菜单）
+    </p>
     <el-card shadow="never" :style="elStyle">
       <template #header>
         <div class="card-header">
           <span>当前角色：{{ username }}</span>
         </div>
+        <el-link
+          class="mt-2"
+          href="https://github.com/pure-admin/vue-pure-admin/blob/main/src/views/permission/page/index.vue"
+          target="_blank"
+        >
+          代码位置 src/views/permission/page/index.vue
+        </el-link>
       </template>
-      <el-select v-model="username" @change="onChange">
+      <el-select v-model="username" class="!w-[160px]" @change="onChange">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -62,5 +69,5 @@ function onChange() {
         />
       </el-select>
     </el-card>
-  </el-space>
+  </div>
 </template>

@@ -1,22 +1,35 @@
 import { defineStore } from "pinia";
-import { store } from "@/store";
-import type { userType } from "./types";
-import { routerArrays } from "@/layout/types";
-import { router, resetRouter } from "@/router";
-import { storageSession } from "@pureadmin/utils";
-import {getLogin, refreshTokenApi, sign} from "@/api/user";
-import type { UserResult, RefreshTokenResult } from "@/api/user";
-import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
-import { type DataInfo, setToken, removeToken, sessionKey } from "@/utils/auth";
+import {
+  type userType,
+  store,
+  router,
+  resetRouter,
+  routerArrays,
+  storageLocal
+} from "../utils";
+import {
+  type UserResult,
+  type RefreshTokenResult,
+  getLogin,
+  refreshTokenApi
+} from "@/api/user";
+import { useMultiTagsStoreHook } from "./multiTags";
+import { type DataInfo, setToken, removeToken, userKey } from "@/utils/auth";
 
 export const useUserStore = defineStore({
   id: "pure-user",
   state: (): userType => ({
+    // 头像
+    avatar: storageLocal().getItem<DataInfo<number>>(userKey)?.avatar ?? "",
     // 用户名
-    username:
-      storageSession().getItem<DataInfo<number>>(sessionKey)?.username ?? "",
+    username: storageLocal().getItem<DataInfo<number>>(userKey)?.username ?? "",
+    // 昵称
+    nickname: storageLocal().getItem<DataInfo<number>>(userKey)?.nickname ?? "",
     // 页面级别权限
-    roles: storageSession().getItem<DataInfo<number>>(sessionKey)?.roles ?? [],
+    roles: storageLocal().getItem<DataInfo<number>>(userKey)?.roles ?? [],
+    // 按钮级别权限
+    permissions:
+      storageLocal().getItem<DataInfo<number>>(userKey)?.permissions ?? [],
     // 前端生成的验证码（按实际需求替换）
     verifyCode: "",
     // 判断登录页面显示哪个组件（0：登录（默认）、1：手机登录、2：二维码登录、3：注册、4：忘记密码）
@@ -27,13 +40,25 @@ export const useUserStore = defineStore({
     loginDay: 7
   }),
   actions: {
+    /** 存储头像 */
+    SET_AVATAR(avatar: string) {
+      this.avatar = avatar;
+    },
     /** 存储用户名 */
     SET_USERNAME(username: string) {
       this.username = username;
     },
+    /** 存储昵称 */
+    SET_NICKNAME(nickname: string) {
+      this.nickname = nickname;
+    },
     /** 存储角色 */
     SET_ROLES(roles: Array<string>) {
       this.roles = roles;
+    },
+    /** 存储按钮级别权限 */
+    SET_PERMS(permissions: Array<string>) {
+      this.permissions = permissions;
     },
     /** 存储前端生成的验证码 */
     SET_VERIFYCODE(verifyCode: string) {
@@ -56,9 +81,7 @@ export const useUserStore = defineStore({
       return new Promise<UserResult>((resolve, reject) => {
         getLogin(data)
           .then(data => {
-            if (data.success) {
-              setToken(data.data);
-            }
+            if (data?.success) setToken(data.data);
             resolve(data);
           })
           .catch(error => {
@@ -70,6 +93,7 @@ export const useUserStore = defineStore({
     logOut() {
       this.username = "";
       this.roles = [];
+      this.permissions = [];
       removeToken();
       useMultiTagsStoreHook().handleTags("equal", [...routerArrays]);
       resetRouter();
@@ -80,37 +104,16 @@ export const useUserStore = defineStore({
       return new Promise<RefreshTokenResult>((resolve, reject) => {
         refreshTokenApi(data)
           .then(data => {
-            if (data.success) {
+            if (data) {
               setToken(data.data);
               resolve(data);
-            } else {
-              this.username = "";
-              this.roles = [];
-              removeToken();
-              useMultiTagsStoreHook().handleTags("equal", [...routerArrays]);
-              resetRouter();
-              router.push("/login");
             }
           })
           .catch(error => {
             reject(error);
           });
       });
-    },
-    async signByUsername(data) {
-      return new Promise<UserResult>((resolve, reject) => {
-        sign(data)
-          .then(data => {
-            if (data.success) {
-              setToken(data.data);
-            }
-            resolve(data);
-          })
-          .catch(error => {
-            reject(error);
-          });
-      });
-    },
+    }
   }
 });
 
