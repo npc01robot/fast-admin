@@ -8,7 +8,7 @@ import { usePublicHooks } from "../hooks";
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
     higherDeptOptions: [],
-    parentId: 0,
+    parent_id: 0,
     name: "",
     principal: "",
     phone: "",
@@ -41,7 +41,7 @@ defineExpose({ getRef });
       <re-col>
         <el-form-item label="上级部门">
           <el-cascader
-            v-model="newFormInline.parentId"
+            v-model="newFormInline.parent_id"
             class="w-full"
             :options="newFormInline.higherDeptOptions"
             :props="{

@@ -11,15 +11,22 @@ import { useUserStoreHook } from "@/store/modules/user";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Lock from "@iconify-icons/ri/lock-fill";
 import Iphone from "@iconify-icons/ep/iphone";
+import Message from "@iconify-icons/ep/message";
 import User from "@iconify-icons/ri/user-3-fill";
+import { signUp } from "@/api/user";
+import { getTopMenu, initRouter } from "@/router/utils";
+import { useRouter } from "vue-router";
 
 const { t } = useI18n();
 const checked = ref(false);
 const loading = ref(false);
+const router = useRouter();
+const disabled = ref(false);
 const ruleForm = reactive({
   username: "",
+  nickname: "",
   phone: "",
-  verifyCode: "",
+  email: "",
   password: "",
   repeatPassword: ""
 });
@@ -49,12 +56,43 @@ const onUpdate = async (formEl: FormInstance | undefined) => {
     if (valid) {
       if (checked.value) {
         // 模拟请求，需根据实际开发进行修改
-        setTimeout(() => {
-          message(transformI18n($t("login.pureRegisterSuccess")), {
-            type: "success"
-          });
-          loading.value = false;
-        }, 2000);
+        signUp(ruleForm).then(res => {
+          if (res.success) {
+            message(transformI18n($t("login.pureRegisterSuccess")), {
+              type: "success"
+            });
+            loading.value = false;
+            useUserStoreHook()
+              .loginByUsername({
+                username: ruleForm.username,
+                password: "admin123"
+              })
+              .then(res => {
+                if (res.success) {
+                  // 获取后端路由
+                  return initRouter().then(() => {
+                    disabled.value = true;
+                    router
+                      .push(getTopMenu(true).path)
+                      .then(() => {
+                        message(t("login.pureLoginSuccess"), {
+                          type: "success"
+                        });
+                      })
+                      .finally(() => (disabled.value = false));
+                  });
+                } else {
+                  message(t("login.pureLoginFail"), { type: "error" });
+                }
+              })
+              .finally(() => (loading.value = false));
+          } else {
+            message(transformI18n($t("login.pureRegisterFailed")), {
+              type: "error"
+            });
+            loading.value = false;
+          }
+        });
       } else {
         loading.value = false;
         message(transformI18n($t("login.pureTickPrivacy")), {
@@ -100,8 +138,37 @@ function onBack() {
       </el-form-item>
     </Motion>
 
+    <Motion>
+      <el-form-item
+        :rules="[
+          {
+            required: true,
+            message: transformI18n($t('login.pureNicknameReg')),
+            trigger: 'blur'
+          }
+        ]"
+        prop="nickname"
+      >
+        <el-input
+          v-model="ruleForm.nickname"
+          clearable
+          :placeholder="t('login.pureNickname')"
+          :prefix-icon="useRenderIcon(User)"
+        />
+      </el-form-item>
+    </Motion>
+
     <Motion :delay="100">
-      <el-form-item prop="phone">
+      <el-form-item
+        :rules="[
+          {
+            required: true,
+            message: transformI18n($t('login.purePhoneReg')),
+            trigger: 'blur'
+          }
+        ]"
+        prop="phone"
+      >
         <el-input
           v-model="ruleForm.phone"
           clearable
@@ -111,27 +178,23 @@ function onBack() {
       </el-form-item>
     </Motion>
 
-    <Motion :delay="150">
-      <el-form-item prop="verifyCode">
-        <div class="w-full flex justify-between">
-          <el-input
-            v-model="ruleForm.verifyCode"
-            clearable
-            :placeholder="t('login.pureSmsVerifyCode')"
-            :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
-          />
-          <el-button
-            :disabled="isDisabled"
-            class="ml-2"
-            @click="useVerifyCode().start(ruleFormRef, 'phone')"
-          >
-            {{
-              text.length > 0
-                ? text + t("login.pureInfo")
-                : t("login.pureGetVerifyCode")
-            }}
-          </el-button>
-        </div>
+    <Motion :delay="100">
+      <el-form-item
+        :rules="[
+          {
+            required: true,
+            message: transformI18n($t('login.pureEmailReg')),
+            trigger: 'blur'
+          }
+        ]"
+        prop="email"
+      >
+        <el-input
+          v-model="ruleForm.email"
+          clearable
+          :placeholder="t('login.pureEmail')"
+          :prefix-icon="useRenderIcon(Message)"
+        />
       </el-form-item>
     </Motion>
 

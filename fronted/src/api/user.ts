@@ -70,20 +70,27 @@ type ResultTable = {
 
 /** 登录 */
 export const getLogin = (data?: object) => {
-  return http.request<UserResult>("post", "/login", { data });
+  return http.request<UserResult>("post", "/api/auth/login/", { data });
+};
+
+/** 注册 */
+export const signUp = (data?: object) => {
+  return http.request<UserResult>("post", "/api/auth/sign/", { data });
 };
 
 /** 刷新`token` */
 export const refreshTokenApi = (data?: object) => {
-  return http.request<RefreshTokenResult>("post", "/refresh-token", { data });
+  return http.request<RefreshTokenResult>("post", "/api/auth/refresh-token/", {
+    data
+  });
 };
 
 /** 账户设置-个人信息 */
 export const getMine = (data?: object) => {
-  return http.request<UserInfoResult>("get", "/mine", { data });
+  return http.request<UserInfoResult>("get", "/api/auth/mine/", { data });
 };
 
 /** 账户设置-个人安全日志 */
 export const getMineLogs = (data?: object) => {
-  return http.request<ResultTable>("get", "/mine-logs", { data });
+  return http.request<ResultTable>("get", "/api/auth/mine-logs", { data });
 };

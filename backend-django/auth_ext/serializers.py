@@ -7,7 +7,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, Toke
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from auth_ext.models import AuthExtUser
+from auth_ext.models import AuthExtUser, Department
 from fast.settings import SIMPLE_JWT
 
 
@@ -66,6 +66,8 @@ class AuthExtTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class AuthUserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
     class Meta:
         model = AuthExtUser
         fields = '__all__'
@@ -73,10 +75,10 @@ class AuthUserSerializer(serializers.ModelSerializer):
     def save(self):
         if self.validated_data['username'] == "admin":
             self.validated_data['roles'] = ["admin", "common"]
-            self.validated_data['auths'] = ["btn_add", "btn_edit", "btn_delete"]
+            self.validated_data['permissions'] = ["permission:btn:add", "permission:btn:edit", "permission:btn:delete"]
         else:
             self.validated_data['roles'] = ["common"]
-            self.validated_data['auths'] = ["btn_add", "btn_edit"]
+            self.validated_data['permissions'] = ["permission:btn:add", "permission:btn:edit", "permission:btn:delete"]
         self.validated_data['password'] = make_password(self.validated_data.pop('password'))
         user = super().save()
         return user
@@ -108,3 +110,9 @@ class AuthRefreshTokenSerializer(serializers.Serializer):
             refresh.set_exp()
             refresh.set_iat()
         return data
+
+
+class DepartmentSerializer(serializers.Serializer):
+    class Meta:
+        model = Department
+        fields = '__all__'

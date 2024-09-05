@@ -194,6 +194,7 @@ status:
   pureNoTodo: No Todo
 login:
   pureUsername: Username
+  pureNickname: Nickname
   purePassword: Password
   pureVerifyCode: VerifyCode
   pureRemember: days no need to login
@@ -211,6 +212,7 @@ login:
   pureWeiBoLogin: Weibo Login
   purePhone: Phone
   pureSmsVerifyCode: SMS VerifyCode
+  pureEmail: Email
   pureBack: Back
   pureTest: Mock Test
   pureTip: After scanning the code, click "Confirm" to complete the login
@@ -224,11 +226,13 @@ login:
   pureGetVerifyCode: Get VerifyCode
   pureInfo: Seconds
   pureUsernameReg: Please enter username
+  pureUserNicknameReg: Please enter nickname
   purePassWordReg: Please enter password
   pureVerifyCodeReg: Please enter verify code
   pureVerifyCodeCorrectReg: Please enter correct verify code
   pureVerifyCodeSixReg: Please enter a 6-digit verify code
   purePhoneReg: Please enter the phone
+  pureEmailReg: Please enter the email
   purePhoneCorrectReg: Please enter the correct phone number format
   purePassWordRuleReg: The password format should be any combination of 8-18 digits
   purePassWordSureReg: Please enter confirm password

@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import { getDeptList } from "@/api/system";
+import { getDeptList, postDept } from "@/api/system";
 import { usePublicHooks } from "../../hooks";
 import { addDialog } from "@/components/ReDialog";
 import { reactive, ref, onMounted, h } from "vue";
@@ -95,7 +95,7 @@ export function useDept() {
     if (!treeList || !treeList.length) return;
     const newTreeList = [];
     for (let i = 0; i < treeList.length; i++) {
-      treeList[i].disabled = treeList[i].status === 0 ? true : false;
+      treeList[i].disabled = treeList[i].status === 0;
       formatHigherDeptOptions(treeList[i].children);
       newTreeList.push(treeList[i]);
     }
@@ -108,7 +108,7 @@ export function useDept() {
       props: {
         formInline: {
           higherDeptOptions: formatHigherDeptOptions(cloneDeep(dataList.value)),
-          parentId: row?.parentId ?? 0,
+          parent_id: row?.parent_id ?? 0,
           name: row?.name ?? "",
           principal: row?.principal ?? "",
           phone: row?.phone ?? "",
@@ -140,7 +140,16 @@ export function useDept() {
             // 表单规则校验通过
             if (title === "新增") {
               // 实际开发先调用新增接口，再进行下面操作
-              chores();
+              // 新增部门接口
+              postDept(curData)
+                .then(res => {
+                  if (res.success) {
+                    chores();
+                  }
+                })
+                .catch(() => {
+                  message("新增部门失败", { type: "error" });
+                });
             } else {
               // 实际开发先调用修改接口，再进行下面操作
               chores();
