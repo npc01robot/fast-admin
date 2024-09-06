@@ -1,14 +1,10 @@
 import datetime
-import time
 
-from auth_ext.models import AuthExtUser, Department
+from auth_ext.models.user import AuthExtUser
 from django.contrib.auth.hashers import check_password, make_password
 from fast.settings import SIMPLE_JWT
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import (
-    TokenObtainPairSerializer,
-    TokenRefreshSerializer,
-)
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -71,6 +67,8 @@ class AuthExtTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class AuthUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    roles = serializers.ListField(read_only=True)
+    permissions = serializers.ListField(read_only=True)
 
     class Meta:
         model = AuthExtUser
@@ -130,31 +128,3 @@ class AuthRefreshTokenSerializer(serializers.Serializer):
             refresh.set_exp()
             refresh.set_iat()
         return data
-
-
-class DepartmentSerializer(serializers.ModelSerializer):
-    parent_id = serializers.SerializerMethodField()
-
-    def get_parent_id(self, obj):
-        if obj.parent:
-            return obj.parent.id
-        else:
-            return None
-
-    class Meta:
-        model = Department
-        fields = [
-            "id",
-            "name",
-            "parent_id",
-            "sort",
-            "phone",
-            "email",
-            "type",
-            "description",
-            "remark",
-            "status",
-            "is_delete",
-            "create_time",
-            "update_time",
-        ]

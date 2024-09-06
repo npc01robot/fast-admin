@@ -1,66 +1,10 @@
-from auth_ext.models import AuthExtUser, Department
-from auth_ext.serializers import (
-    AuthExtTokenObtainPairSerializer,
-    AuthRefreshTokenSerializer,
-    AuthUserSerializer,
-    DepartmentSerializer,
-)
-from rest_framework import generics, status, viewsets
-from rest_framework.response import Response
-from rest_framework_simplejwt.views import TokenRefreshView, TokenViewBase
-
-# Create your views here.
-
-
-# 登录视图
-class AuthExtUserView(TokenViewBase):
-    serializer_class = AuthExtTokenObtainPairSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
-
-
-# 注册
-class AuthUserViewSet(generics.GenericAPIView):
-    serializer_class = AuthUserSerializer
-    queryset = AuthExtUser.objects.all()
-    permission_classes = []
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        # 生成token
-        token_serializer = AuthExtTokenObtainPairSerializer(data=request.data)
-        token_serializer.is_valid(raise_exception=True)
-        return Response(token_serializer.validated_data, status=status.HTTP_200_OK)
-
-
-# 刷新token
-class AuthRefreshToken(TokenRefreshView):
-    serializer_class = AuthRefreshTokenSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
-
-
-# 用户信息
-class AuthUserInfoView(generics.RetrieveAPIView):
-    serializer_class = AuthUserSerializer
-    queryset = AuthExtUser.objects.all()
-    permission_classes = []
-
-    def get_object(self):
-        return self.request.user
-
-
 # 路由生成
 # todo: 路由生成功能待完善
+from auth_ext.models.user import AuthExtUser
+from rest_framework import generics
+from rest_framework.response import Response
+
+
 class AsyncRoute(generics.ListAPIView):
     """
     动态生成路由,大型项目使用
@@ -364,9 +308,3 @@ class AsyncRoute(generics.ListAPIView):
             # },
         ]
         return Response(data=data)
-
-
-class DepartmentViewSet(viewsets.ModelViewSet):
-    serializer_class = DepartmentSerializer
-    queryset = Department.objects.all()
-    permission_classes = []

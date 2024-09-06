@@ -1,4 +1,11 @@
-from auth_ext.views import *
+from auth_ext.views.department import DepartmentViewSet
+from auth_ext.views.routes import AsyncRoute
+from auth_ext.views.user import (
+    AuthExtUserView,
+    AuthRefreshToken,
+    AuthUserInfoView,
+    AuthUserViewSet,
+)
 from django.urls import re_path
 from rest_framework.routers import DefaultRouter
 

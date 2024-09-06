@@ -1,8 +1,6 @@
-from django.contrib.auth.models import AbstractUser
+from auth_ext.models.role import Role
+from django.contrib.auth.models import AbstractUser, Permission
 from django.db import models
-from django.db.models import Manager
-
-# Create your models here.
 
 
 class AuthExtUser(AbstractUser):
@@ -10,14 +8,15 @@ class AuthExtUser(AbstractUser):
     password = models.CharField(max_length=255, null=False, verbose_name="密码")
     nickname = models.CharField(max_length=150, null=False, verbose_name="昵称")
     avatar = models.CharField(max_length=255, null=True, verbose_name="头像")
-    roles = models.JSONField(
-        default=list, null=False, verbose_name="admin-管理员，common-普通用户"
+    roles = models.ManyToManyField(
+        Role,
+        related_name="role",
+        through_fields=("user", "role"),
     )
-    permissions = models.JSONField(
-        default=list,
-        null=False,
-        verbose_name='["*:*:*"]-所有 ["permission:btn:add", '
-        '"permission:btn:edit"]-添加和编辑 按钮权限',
+    permissions = models.ManyToManyField(
+        Permission,
+        related_name="permission",
+        through_fields=("user", "permission"),
     )
     phone = models.CharField(max_length=11, verbose_name="手机号")
     email = models.EmailField(max_length=20, verbose_name="邮箱")
@@ -59,54 +58,3 @@ class LoginLog(models.Model):
         cls.objects.create(
             ip=ip, address=address, system=system, browser=browser, summary=summary
         )
-
-
-class Department(models.Model):
-    id = models.AutoField(primary_key=True, verbose_name="ID")
-    name = models.CharField(max_length=100, null=False, verbose_name="部门名称")
-    parent = models.ForeignKey(
-        "self",
-        default=None,
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-        verbose_name="上级部门",
-    )
-    sort = models.IntegerField(default=0, verbose_name="排序")
-    phone = models.CharField(max_length=11, null=True, blank=True, verbose_name="电话")
-    email = models.EmailField(
-        max_length=20, null=True, blank=True, verbose_name="Email"
-    )
-
-    COMPANY = "1"
-    FILIABLE = "2"
-    DEPT = "3"
-    TYPE_CHOICES = (
-        (COMPANY, "总公司"),
-        (FILIABLE, "分公司"),
-        (DEPT, "部门"),
-    )
-    type = models.CharField(
-        max_length=2,
-        default="1",
-        choices=TYPE_CHOICES,
-        db_index=True,
-        verbose_name="类型",
-    )
-
-    description = models.CharField(max_length=2000, null=True, verbose_name="描述")
-    remark = models.CharField(
-        max_length=2000, null=True, blank=True, verbose_name="备注"
-    )
-    status = models.BooleanField(default=True, verbose_name="状态 0-禁用 1-启用")
-    is_delete = models.BooleanField(default=False, verbose_name="是否移除")
-
-    create_time = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
-    update_time = models.DateTimeField(auto_now=True, verbose_name="更新时间")
-
-    users: "Manager[AuthExtUser]"
-
-    class Meta(object):
-        db_table = "department"
-        verbose_name = "部门表"
-        managed = True
