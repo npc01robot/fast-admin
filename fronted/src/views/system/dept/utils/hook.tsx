@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import { getDeptList, postDept } from "@/api/system";
+import { delDept, getDeptList, postDept, putDept } from "@/api/system";
 import { usePublicHooks } from "../../hooks";
 import { addDialog } from "@/components/ReDialog";
 import { reactive, ref, onMounted, h } from "vue";
@@ -38,7 +38,7 @@ export function useDept() {
       minWidth: 100,
       cellRenderer: ({ row, props }) => (
         <el-tag size={props.size} style={tagStyle.value(row.status)}>
-          {row.status === 1 ? "启用" : "停用"}
+          {row.status === true ? "启用" : "停用"}
         </el-tag>
       )
     },
@@ -114,7 +114,7 @@ export function useDept() {
           phone: row?.phone ?? "",
           email: row?.email ?? "",
           sort: row?.sort ?? 0,
-          status: row?.status ?? 1,
+          status: row?.status ?? true,
           remark: row?.remark ?? ""
         }
       },
@@ -152,6 +152,15 @@ export function useDept() {
                 });
             } else {
               // 实际开发先调用修改接口，再进行下面操作
+              putDept(curData, row.id)
+                .then(res => {
+                  if (res.success) {
+                    chores();
+                  }
+                })
+                .catch(() => {
+                  message("更新部门失败", { type: "error" });
+                });
               chores();
             }
           }
@@ -161,8 +170,14 @@ export function useDept() {
   }
 
   function handleDelete(row) {
-    message(`您删除了部门名称为${row.name}的这条数据`, { type: "success" });
-    onSearch();
+    delDept(row.id).then(res => {
+      if (!res || res.success) {
+        message(`您删除了部门名称为${row.name}的这条数据`, { type: "success" });
+        onSearch();
+      } else {
+        message("删除部门失败", { type: "error" });
+      }
+    });
   }
 
   onMounted(() => {

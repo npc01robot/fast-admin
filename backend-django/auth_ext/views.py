@@ -1,13 +1,16 @@
-from rest_framework import generics, status
+from auth_ext.models import AuthExtUser, Department
+from auth_ext.serializers import (
+    AuthExtTokenObtainPairSerializer,
+    AuthRefreshTokenSerializer,
+    AuthUserSerializer,
+    DepartmentSerializer,
+)
+from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
-from rest_framework_simplejwt.views import TokenViewBase, TokenRefreshView
-
-from auth_ext.models import AuthExtUser
-from auth_ext.serializers import AuthExtTokenObtainPairSerializer, AuthUserSerializer, AuthRefreshTokenSerializer, \
-    DepartmentSerializer
-
+from rest_framework_simplejwt.views import TokenRefreshView, TokenViewBase
 
 # Create your views here.
+
 
 # 登录视图
 class AuthExtUserView(TokenViewBase):
@@ -17,6 +20,7 @@ class AuthExtUserView(TokenViewBase):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
 
 # 注册
 class AuthUserViewSet(generics.GenericAPIView):
@@ -30,9 +34,7 @@ class AuthUserViewSet(generics.GenericAPIView):
         serializer.save()
 
         # 生成token
-        token_serializer = AuthExtTokenObtainPairSerializer(
-            data=request.data
-        )
+        token_serializer = AuthExtTokenObtainPairSerializer(data=request.data)
         token_serializer.is_valid(raise_exception=True)
         return Response(token_serializer.validated_data, status=status.HTTP_200_OK)
 
@@ -46,6 +48,7 @@ class AuthRefreshToken(TokenRefreshView):
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
+
 # 用户信息
 class AuthUserInfoView(generics.RetrieveAPIView):
     serializer_class = AuthUserSerializer
@@ -58,20 +61,20 @@ class AuthUserInfoView(generics.RetrieveAPIView):
 
 # 路由生成
 # todo: 路由生成功能待完善
-class AsyncRoute(generics.GenericAPIView):
+class AsyncRoute(generics.ListAPIView):
     """
     动态生成路由,大型项目使用
     """
 
     def get(self, request, *args, **kwargs):
-        user = AuthExtUser.objects.filter(pk=request.auth.payload['user_code']).first()
+        user = AuthExtUser.objects.filter(pk=request.auth.payload["user_code"]).first()
         data = [
             {
                 "path": "/system",
                 "meta": {
                     "icon": "ri:settings-3-line",
                     "title": "menus.pureSysManagement",
-                    "rank": 20
+                    "rank": 20,
                 },
                 "children": [
                     {
@@ -80,8 +83,8 @@ class AsyncRoute(generics.GenericAPIView):
                         "meta": {
                             "icon": "ri:admin-line",
                             "title": "menus.pureUser",
-                            "roles": user.roles
-                        }
+                            "roles": user.roles,
+                        },
                     },
                     {
                         "path": "/system/role/index",
@@ -89,8 +92,8 @@ class AsyncRoute(generics.GenericAPIView):
                         "meta": {
                             "icon": "ri:admin-fill",
                             "title": "menus.pureRole",
-                            "roles": user.roles
-                        }
+                            "roles": user.roles,
+                        },
                     },
                     {
                         "path": "/system/menu/index",
@@ -98,8 +101,8 @@ class AsyncRoute(generics.GenericAPIView):
                         "meta": {
                             "icon": "ep:menu",
                             "title": "menus.pureSystemMenu",
-                            "roles": user.roles
-                        }
+                            "roles": user.roles,
+                        },
                     },
                     {
                         "path": "/system/dept/index",
@@ -107,10 +110,10 @@ class AsyncRoute(generics.GenericAPIView):
                         "meta": {
                             "icon": "ri:git-branch-line",
                             "title": "menus.pureDept",
-                            "roles": user.roles
-                        }
-                    }
-                ]
+                            "roles": user.roles,
+                        },
+                    },
+                ],
             },
             # {
             #     "path": "/monitor",
@@ -362,8 +365,8 @@ class AsyncRoute(generics.GenericAPIView):
         ]
         return Response(data=data)
 
-class DepartmentViewSet(generics.ListAPIView):
-    serializer_class = DepartmentSerializer
-    queryset = AuthExtUser.objects.all()
-    permission_classes = []
 
+class DepartmentViewSet(viewsets.ModelViewSet):
+    serializer_class = DepartmentSerializer
+    queryset = Department.objects.all()
+    permission_classes = []

@@ -1,14 +1,16 @@
 import datetime
 import time
 
-from django.contrib.auth.hashers import make_password, check_password
+from auth_ext.models import AuthExtUser, Department
+from django.contrib.auth.hashers import check_password, make_password
+from fast.settings import SIMPLE_JWT
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from rest_framework_simplejwt.serializers import (
+    TokenObtainPairSerializer,
+    TokenRefreshSerializer,
+)
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
-
-from auth_ext.models import AuthExtUser, Department
-from fast.settings import SIMPLE_JWT
 
 
 class AuthExtTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -25,7 +27,7 @@ class AuthExtTokenObtainPairSerializer(TokenObtainPairSerializer):
         """
         token = super().get_token(user)
         # 添加个人信息
-        token['name'] = user.username
+        token["name"] = user.username
         return token
 
     def validate(self, attrs):
@@ -40,10 +42,10 @@ class AuthExtTokenObtainPairSerializer(TokenObtainPairSerializer):
         """
         # data是个字典
         # 其结构为：{'refresh': '用于刷新token的令牌', 'access': '用于身份验证的Token值'}
-        auth_user = AuthExtUser.objects.filter(username=attrs['username']).first()
+        auth_user = AuthExtUser.objects.filter(username=attrs["username"]).first()
         if not auth_user:
             raise serializers.ValidationError("用户不存在！")
-        if not check_password(attrs['password'], auth_user.password):
+        if not check_password(attrs["password"], auth_user.password):
             raise serializers.ValidationError("密码错误！")
         data = super().validate(attrs)
         # 获取Token对象
@@ -51,16 +53,18 @@ class AuthExtTokenObtainPairSerializer(TokenObtainPairSerializer):
         # 令牌到期时间
         current_time = datetime.datetime.now()
         # '指定有效期  业务token -- 1小时'
-        expire_time = current_time + datetime.timedelta(seconds=SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds)
+        expire_time = current_time + datetime.timedelta(
+            seconds=SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"].seconds
+        )
 
-        expire = expire_time.strftime('%Y/%m/%d %H:%M:%S')
+        expire = expire_time.strftime("%Y/%m/%d %H:%M:%S")
 
-        data['expires'] = expire  # 有效期
+        data["expires"] = expire  # 有效期
         # 用户名
-        data['username'] = self.user.username
-        data['roles'] = self.user.roles
-        data['accessToken'] = data.pop('access')
-        data['refreshToken'] = data.pop('refresh')
+        data["username"] = self.user.username
+        data["roles"] = self.user.roles
+        data["accessToken"] = data.pop("access")
+        data["refreshToken"] = data.pop("refresh")
 
         return data
 
@@ -70,16 +74,26 @@ class AuthUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AuthExtUser
-        fields = '__all__'
+        fields = "__all__"
 
     def save(self):
-        if self.validated_data['username'] == "admin":
-            self.validated_data['roles'] = ["admin", "common"]
-            self.validated_data['permissions'] = ["permission:btn:add", "permission:btn:edit", "permission:btn:delete"]
+        if self.validated_data["username"] == "admin":
+            self.validated_data["roles"] = ["admin", "common"]
+            self.validated_data["permissions"] = [
+                "permission:btn:add",
+                "permission:btn:edit",
+                "permission:btn:delete",
+            ]
         else:
-            self.validated_data['roles'] = ["common"]
-            self.validated_data['permissions'] = ["permission:btn:add", "permission:btn:edit", "permission:btn:delete"]
-        self.validated_data['password'] = make_password(self.validated_data.pop('password'))
+            self.validated_data["roles"] = ["common"]
+            self.validated_data["permissions"] = [
+                "permission:btn:add",
+                "permission:btn:edit",
+                "permission:btn:delete",
+            ]
+        self.validated_data["password"] = make_password(
+            self.validated_data.pop("password")
+        )
         user = super().save()
         return user
 
@@ -92,9 +106,15 @@ class AuthRefreshTokenSerializer(serializers.Serializer):
         refresh = self.token_class(attrs["refreshToken"])
         current_time = datetime.datetime.now()
         # '指定有效期  业务token -- 1小时'
-        expire_time = current_time + datetime.timedelta(seconds=SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].seconds)
-        expire = expire_time.strftime('%Y/%m/%d %H:%M:%S')
-        data = {"accessToken": str(refresh.access_token), "refreshToken": str(refresh.token), "expires": expire}
+        expire_time = current_time + datetime.timedelta(
+            seconds=SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"].seconds
+        )
+        expire = expire_time.strftime("%Y/%m/%d %H:%M:%S")
+        data = {
+            "accessToken": str(refresh.access_token),
+            "refreshToken": str(refresh.token),
+            "expires": expire,
+        }
 
         if api_settings.ROTATE_REFRESH_TOKENS:
             if api_settings.BLACKLIST_AFTER_ROTATION:
@@ -112,7 +132,29 @@ class AuthRefreshTokenSerializer(serializers.Serializer):
         return data
 
 
-class DepartmentSerializer(serializers.Serializer):
+class DepartmentSerializer(serializers.ModelSerializer):
+    parent_id = serializers.SerializerMethodField()
+
+    def get_parent_id(self, obj):
+        if obj.parent:
+            return obj.parent.id
+        else:
+            return None
+
     class Meta:
         model = Department
-        fields = '__all__'
+        fields = [
+            "id",
+            "name",
+            "parent_id",
+            "sort",
+            "phone",
+            "email",
+            "type",
+            "description",
+            "remark",
+            "status",
+            "is_delete",
+            "create_time",
+            "update_time",
+        ]

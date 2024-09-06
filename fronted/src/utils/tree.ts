@@ -35,7 +35,7 @@ export const deleteChildren = (tree: any[], pathList = []): any => {
   for (const [key, node] of tree.entries()) {
     if (node.children && node.children.length === 1) delete node.children;
     node.id = key;
-    node.parentId = pathList.length ? pathList[pathList.length - 1] : null;
+    node.parent_id = pathList.length ? pathList[pathList.length - 1] : null;
     node.pathList = [...pathList, node.id];
     node.uniqueId =
       node.pathList.length > 1 ? node.pathList.join("-") : node.pathList[0];
@@ -61,7 +61,7 @@ export const buildHierarchyTree = (tree: any[], pathList = []): any => {
   if (!tree || tree.length === 0) return [];
   for (const [key, node] of tree.entries()) {
     node.id = key;
-    node.parentId = pathList.length ? pathList[pathList.length - 1] : null;
+    node.parent_id = pathList.length ? pathList[pathList.length - 1] : null;
     node.pathList = [...pathList, node.id];
     const hasChildren = node.children && node.children.length > 0;
     if (hasChildren) {
@@ -130,14 +130,14 @@ export const appendFieldByUniqueId = (
  * @description 构造树型结构数据
  * @param data 数据源
  * @param id id字段 默认id
- * @param parentId 父节点字段，默认parentId
+ * @param parent_id 父节点字段，默认parent_id
  * @param children 子节点字段，默认children
  * @returns 追加字段后的树
  */
 export const handleTree = (
   data: any[],
-  id?: string,
-  parentId?: string,
+  id?: number | string,
+  parent_id?: number | string,
   children?: string
 ): any => {
   if (!Array.isArray(data)) {
@@ -146,7 +146,7 @@ export const handleTree = (
   }
   const config = {
     id: id || "id",
-    parentId: parentId || "parentId",
+    parent_id: parent_id || "parent_id",
     childrenList: children || "children"
   };
 
@@ -155,17 +155,17 @@ export const handleTree = (
   const tree = [];
 
   for (const d of data) {
-    const parentId = d[config.parentId];
-    if (childrenListMap[parentId] == null) {
-      childrenListMap[parentId] = [];
+    const parent_id = d[config.parent_id];
+    if (childrenListMap[parent_id] == null) {
+      childrenListMap[parent_id] = [];
     }
     nodeIds[d[config.id]] = d;
-    childrenListMap[parentId].push(d);
+    childrenListMap[parent_id].push(d);
   }
 
   for (const d of data) {
-    const parentId = d[config.parentId];
-    if (nodeIds[parentId] == null) {
+    const parent_id = d[config.parent_id];
+    if (nodeIds[parent_id] == null) {
       tree.push(d);
     }
   }

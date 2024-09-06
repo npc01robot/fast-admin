@@ -54,6 +54,17 @@ export const postDept = (data?: object) => {
   return http.request<Result>("post", "/api/auth/dept/", { data });
 };
 
+/** 更新系统管理-部门管理 */
+export const putDept = (data?: object, id?: number) => {
+  return http.request<Result>("put", `/api/auth/dept/${id}/`, {
+    data
+  });
+};
+
+/** 删除系统管理-部门管理 */
+export const delDept = (id?: number) => {
+  return http.request<Result>("delete", `/api/auth/dept/${id}/`);
+};
 /** 获取系统监控-在线用户列表 */
 export const getOnlineLogsList = (data?: object) => {
   return http.request<ResultTable>("post", "/online-logs", { data });

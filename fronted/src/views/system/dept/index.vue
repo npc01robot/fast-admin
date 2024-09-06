@@ -51,8 +51,8 @@ const {
           clearable
           class="!w-[180px]"
         >
-          <el-option label="启用" :value="1" />
-          <el-option label="停用" :value="0" />
+          <el-option label="启用" :value="true" />
+          <el-option label="停用" :value="false" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -122,7 +122,7 @@ const {
               type="primary"
               :size="size"
               :icon="useRenderIcon(AddFill)"
-              @click="openDialog('新增', { parentId: row.id } as any)"
+              @click="openDialog('新增', { parent_id: row.id } as any)"
             >
               新增
             </el-button>
