@@ -82,12 +82,12 @@ const onUpdate = async (formEl: FormInstance | undefined) => {
                       .finally(() => (disabled.value = false));
                   });
                 } else {
-                  message(t("login.pureLoginFail"), { type: "error" });
+                  message($t("login.pureLoginFail"), { type: "error" });
                 }
               })
               .finally(() => (loading.value = false));
           } else {
-            message(transformI18n($t("login.pureRegisterFailed")), {
+            message(res.msg || $t("login.pureRegisterFail"), {
               type: "error"
             });
             loading.value = false;

@@ -113,7 +113,7 @@ const {
               type="primary"
               :size="size"
               :icon="useRenderIcon(AddFill)"
-              @click="openDialog('新增', { parentId: row.id } as any)"
+              @click="openDialog('新增', { parent: row.id } as any)"
             >
               新增
             </el-button>

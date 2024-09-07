@@ -75,7 +75,8 @@ export function useDept() {
   async function onSearch() {
     loading.value = true;
     const { data } = await getDeptList(); // 这里是返回一维数组结构，前端自行处理成树结构，返回格式要求：唯一id加父节点parentId，parentId取父节点id
-    let newData = data;
+    let newData = data.data;
+
     if (!isAllEmpty(form.name)) {
       // 前端搜索部门名称
       newData = newData.filter(item => item.name.includes(form.name));
@@ -108,7 +109,7 @@ export function useDept() {
       props: {
         formInline: {
           higherDeptOptions: formatHigherDeptOptions(cloneDeep(dataList.value)),
-          parent_id: row?.parent_id ?? 0,
+          parent: row?.parent ?? null,
           name: row?.name ?? "",
           principal: row?.principal ?? "",
           phone: row?.phone ?? "",

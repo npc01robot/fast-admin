@@ -95,6 +95,7 @@ AUTH_USER_MODEL = 'auth_ext.AuthExtUser'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':  'rest_framework_ext.pagination.PageNumberPaginationExt',
+    'PAGE_SIZE': 20,
 
     # 过滤配置
     'DEFAULT_FILTER_BACKENDS': (

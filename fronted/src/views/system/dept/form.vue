@@ -9,7 +9,7 @@ const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
     id: 0,
     higherDeptOptions: [],
-    parent_id: 0,
+    parent: null,
     name: "",
     principal: "",
     phone: "",
@@ -42,7 +42,7 @@ defineExpose({ getRef });
       <re-col>
         <el-form-item label="上级部门">
           <el-cascader
-            v-model="newFormInline.parent_id"
+            v-model="newFormInline.parent"
             class="w-full"
             :options="newFormInline.higherDeptOptions"
             :props="{

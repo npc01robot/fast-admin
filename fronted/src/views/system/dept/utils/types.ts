@@ -1,7 +1,7 @@
 interface FormItemProps {
   id: number;
   higherDeptOptions: Record<string, unknown>[];
-  parent_id: number;
+  parent: number | null;
   name: string;
   principal: string;
   phone: string | number;

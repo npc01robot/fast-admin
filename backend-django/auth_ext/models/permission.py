@@ -19,6 +19,6 @@ class Permission(models.Model):
     title = models.CharField(max_length=255)
 
     class Meta:
-        db_table = "permission"
-        verbose_name = "Permission"
+        db_table = "auth_ext_permission"
+        verbose_name = "权限"
         managed = True

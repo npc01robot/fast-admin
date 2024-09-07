@@ -66,6 +66,7 @@ class AuthExtTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class AuthUserSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
     password = serializers.CharField(write_only=True)
     roles = serializers.ListField(read_only=True)
     permissions = serializers.ListField(read_only=True)

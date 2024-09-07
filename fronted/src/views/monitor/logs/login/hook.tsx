@@ -130,10 +130,7 @@ export function useRole(tableRef: Ref) {
   async function onSearch() {
     loading.value = true;
     const { data } = await getLoginLogsList(toRaw(form));
-    dataList.value = data.list;
-    pagination.total = data.total;
-    pagination.pageSize = data.pageSize;
-    pagination.currentPage = data.currentPage;
+    dataList.value = data;
 
     setTimeout(() => {
       loading.value = false;

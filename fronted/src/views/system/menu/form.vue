@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
     menuType: 0,
     higherMenuOptions: [],
-    parentId: 0,
+    parent: 0,
     title: "",
     name: "",
     path: "",
@@ -74,7 +74,7 @@ defineExpose({ getRef });
       <re-col>
         <el-form-item label="上级菜单">
           <el-cascader
-            v-model="newFormInline.parentId"
+            v-model="newFormInline.parent"
             class="w-full"
             :options="newFormInline.higherMenuOptions"
             :props="{

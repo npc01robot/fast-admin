@@ -2,21 +2,20 @@ import { http } from "@/utils/http";
 
 type Result = {
   success: boolean;
+  code: number;
+  msg?: string;
   data?: Array<any>;
 };
 
 type ResultTable = {
   success: boolean;
-  data?: {
-    /** 列表数据 */
-    list: Array<any>;
-    /** 总条目数 */
-    total?: number;
-    /** 每页显示条目个数 */
-    pageSize?: number;
-    /** 当前页数 */
-    currentPage?: number;
-  };
+  code: number;
+  message: string;
+  total?: number;
+  page?: number;
+  page_size?: number;
+  page_count?: number;
+  data?: Array<any>;
 };
 
 /** 获取系统管理-用户管理列表 */
@@ -36,12 +35,46 @@ export const getRoleIds = (data?: object) => {
 
 /** 获取系统管理-角色管理列表 */
 export const getRoleList = (data?: object) => {
-  return http.request<ResultTable>("post", "/role", { data });
+  return http.request<ResultTable>("get", "/api/auth/role/", { params: data });
+};
+
+/** 创建系统管理-角色管理列表 */
+export const createRole = (data?: object) => {
+  return http.request<ResultTable>("post", "/api/auth/role/", { data });
+};
+
+/** 创建系统管理-角色管理列表 */
+export const updateRole = (data?: object, id?: string) => {
+  return http.request<ResultTable>("put", `/api/auth/role/${id}/`, {
+    data
+  });
+};
+
+/** 删除系统管理-角色管理列表 */
+export const deleteRole = (id?: string) => {
+  return http.request<ResultTable>("delete", `/api/auth/role/${id}/`);
 };
 
 /** 获取系统管理-菜单管理列表 */
 export const getMenuList = (data?: object) => {
-  return http.request<Result>("post", "/menu", { data });
+  return http.request<ResultTable>("get", "/api/auth/menu/", { params: data });
+};
+
+/** 创建系统管理-菜单管理 */
+export const createMenu = (data?: object) => {
+  return http.request<ResultTable>("post", "/api/auth/menu/", { data });
+};
+
+/** 更新系统管理-菜单管理 */
+export const updateMenu = (data?: object, id?: number) => {
+  return http.request<Result>("put", `/api/auth/menu/${id}/`, {
+    data
+  });
+};
+
+/** 删除系统管理-菜单管理 */
+export const deleteMenu = (id?: number) => {
+  return http.request<Result>("delete", `/api/auth/menu/${id}/`);
 };
 
 /** 获取系统管理-部门管理列表 */
@@ -65,6 +98,7 @@ export const putDept = (data?: object, id?: number) => {
 export const delDept = (id?: number) => {
   return http.request<Result>("delete", `/api/auth/dept/${id}/`);
 };
+
 /** 获取系统监控-在线用户列表 */
 export const getOnlineLogsList = (data?: object) => {
   return http.request<ResultTable>("post", "/online-logs", { data });
@@ -92,10 +126,19 @@ export const getSystemLogsDetail = (data?: object) => {
 
 /** 获取角色管理-权限-菜单权限 */
 export const getRoleMenu = (data?: object) => {
-  return http.request<Result>("post", "/role-menu", { data });
+  return http.request<Result>("get", "/api/auth/menu/menu_tree/", { data });
 };
 
 /** 获取角色管理-权限-菜单权限-根据角色 id 查对应菜单 */
-export const getRoleMenuIds = (data?: object) => {
-  return http.request<Result>("post", "/role-menu-ids", { data });
+export const getRoleMenuIds = (data?: object, id?: number) => {
+  return http.request<Result>("get", `/api/auth/role/${id}/menu_list/`, {
+    data
+  });
+};
+
+/** 角色管理-权限-菜单权限-更新角色菜单权限 */
+export const updateRoleMenu = (data?: object, id?: number) => {
+  return http.request<Result>("put", `/api/auth/role/${id}/menu_update/`, {
+    data
+  });
 };
