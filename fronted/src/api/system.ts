@@ -10,27 +10,58 @@ type Result = {
 type ResultTable = {
   success: boolean;
   code: number;
-  message: string;
-  total?: number;
-  page?: number;
-  page_size?: number;
-  page_count?: number;
-  data?: Array<any>;
+  msg: string;
+  data?: {
+    list?: Array<any>;
+    total?: number;
+    page?: number;
+    page_size?: number;
+    page_count?: number;
+  };
 };
 
 /** 获取系统管理-用户管理列表 */
 export const getUserList = (data?: object) => {
+  return http.request<ResultTable>("get", "/api/auth/user/", { data });
+};
+/** 创建系统管理-用户管理 */
+export const createUser = (data?: object) => {
   return http.request<ResultTable>("post", "/api/auth/user/", { data });
+};
+
+/** 更新系统管理-用户管理 */
+export const updateUser = (data?: object, id?: number) => {
+  return http.request<ResultTable>("put", `/api/auth/user/${id}/`, {
+    data
+  });
+};
+
+/** 删除系统管理-用户管理 */
+export const deleteUser = (id?: number) => {
+  return http.request<ResultTable>("delete", `/api/auth/user/${id}/`);
+};
+
+/** 修改密码 */
+export const changePassword = (data?: object, id?: number) => {
+  return http.request<Result>("put", `/api/auth/user/${id}/change_password/`, {
+    data
+  });
 };
 
 /** 系统管理-用户管理-获取所有角色列表 */
 export const getAllRoleList = () => {
-  return http.request<Result>("get", "/list-all-role");
+  return http.request<Result>("get", "/api/auth/role/role_list/");
 };
 
 /** 系统管理-用户管理-根据userId，获取对应角色id列表（userId：用户id） */
-export const getRoleIds = (data?: object) => {
-  return http.request<Result>("post", "/list-role-ids", { data });
+export const getRoleIds = (id?: number) => {
+  return http.request<Result>("get", `/api/auth/user/${id}/role_list/`);
+};
+/** 系统管理-用户管理-更新用户角色 */
+export const updateUserRole = (data?: object, id?: number) => {
+  return http.request<Result>("put", `/api/auth/user/${id}/add_roles/`, {
+    data
+  });
 };
 
 /** 获取系统管理-角色管理列表 */
@@ -57,7 +88,7 @@ export const deleteRole = (id?: string) => {
 
 /** 获取系统管理-菜单管理列表 */
 export const getMenuList = (data?: object) => {
-  return http.request<ResultTable>("get", "/api/auth/menu/", { params: data });
+  return http.request<Result>("get", "/api/auth/menu/", { params: data });
 };
 
 /** 创建系统管理-菜单管理 */

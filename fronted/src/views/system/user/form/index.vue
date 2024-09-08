@@ -9,14 +9,16 @@ const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
     title: "新增",
     higherDeptOptions: [],
-    parentId: 0,
+    departId: 0,
     nickname: "",
     username: "",
     password: "",
     phone: "",
     email: "",
-    sex: "",
+    gender: "",
     status: 1,
+    roles: [],
+    permissions: [],
     remark: ""
   })
 });
@@ -24,10 +26,14 @@ const props = withDefaults(defineProps<FormProps>(), {
 const sexOptions = [
   {
     value: 0,
-    label: "男"
+    label: "未知"
   },
   {
     value: 1,
+    label: "男"
+  },
+  {
+    value: 2,
     label: "女"
   }
 ];
@@ -105,7 +111,7 @@ defineExpose({ getRef });
       <re-col :value="12" :xs="24" :sm="24">
         <el-form-item label="用户性别">
           <el-select
-            v-model="newFormInline.sex"
+            v-model="newFormInline.gender"
             placeholder="请选择用户性别"
             class="w-full"
             clearable
@@ -123,7 +129,7 @@ defineExpose({ getRef });
       <re-col :value="12" :xs="24" :sm="24">
         <el-form-item label="归属部门">
           <el-cascader
-            v-model="newFormInline.parentId"
+            v-model="newFormInline.dept_id"
             class="w-full"
             :options="newFormInline.higherDeptOptions"
             :props="{

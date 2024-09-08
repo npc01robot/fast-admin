@@ -83,8 +83,8 @@ export function useRole() {
     const { data } = await getOnlineLogsList(toRaw(form));
     dataList.value = data.list;
     pagination.total = data.total;
-    pagination.pageSize = data.pageSize;
-    pagination.currentPage = data.currentPage;
+    pagination.pageSize = data.page_size;
+    pagination.currentPage = data.page;
 
     setTimeout(() => {
       loading.value = false;

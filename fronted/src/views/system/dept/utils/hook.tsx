@@ -75,7 +75,7 @@ export function useDept() {
   async function onSearch() {
     loading.value = true;
     const { data } = await getDeptList(); // 这里是返回一维数组结构，前端自行处理成树结构，返回格式要求：唯一id加父节点parentId，parentId取父节点id
-    let newData = data.data;
+    let newData = data;
 
     if (!isAllEmpty(form.name)) {
       // 前端搜索部门名称

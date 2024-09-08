@@ -12,6 +12,7 @@ class AsyncRoute(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         user = AuthExtUser.objects.filter(pk=request.auth.payload["user_code"]).first()
+        roles = user.roles.all().values_list('code', flat=True)
         data = [
             {
                 "path": "/system",
@@ -27,7 +28,7 @@ class AsyncRoute(generics.ListAPIView):
                         "meta": {
                             "icon": "ri:admin-line",
                             "title": "menus.pureUser",
-                            "roles": user.roles,
+                            "roles": ["admin"],
                         },
                     },
                     {
@@ -36,7 +37,7 @@ class AsyncRoute(generics.ListAPIView):
                         "meta": {
                             "icon": "ri:admin-fill",
                             "title": "menus.pureRole",
-                            "roles": user.roles,
+                            "roles": ["admin"],
                         },
                     },
                     {
@@ -45,7 +46,7 @@ class AsyncRoute(generics.ListAPIView):
                         "meta": {
                             "icon": "ep:menu",
                             "title": "menus.pureSystemMenu",
-                            "roles": user.roles,
+                            "roles": ["admin"],
                         },
                     },
                     {
@@ -54,7 +55,7 @@ class AsyncRoute(generics.ListAPIView):
                         "meta": {
                             "icon": "ri:git-branch-line",
                             "title": "menus.pureDept",
-                            "roles": user.roles,
+                            "roles": ["admin"],
                         },
                     },
                 ],

@@ -205,7 +205,7 @@ export function useRole(tableRef: Ref) {
   async function onSearch() {
     loading.value = true;
     const { data } = await getSystemLogsList(toRaw(form));
-    dataList.value = data.data;
+    dataList.value = data.list;
     pagination.total = data.total;
     pagination.pageSize = data.page_size;
     pagination.currentPage = data.page;

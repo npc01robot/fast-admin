@@ -147,7 +147,7 @@ export function useRole(treeRef: Ref) {
                 }
               );
             } else {
-              message(res.message, { type: "error" });
+              message(res.msg, { type: "error" });
             }
           })
           .finally(() => {
@@ -171,7 +171,7 @@ export function useRole(treeRef: Ref) {
         message(`您删除了角色名称为${row.name}的这条数据`, { type: "success" });
         onSearch();
       } else {
-        message(res.message, { type: "error" });
+        message(res.msg, { type: "error" });
       }
     });
   }
@@ -197,7 +197,7 @@ export function useRole(treeRef: Ref) {
     loading.value = true;
     console.log("onSearch", form);
     const { data } = await getRoleList(toRaw(form));
-    dataList.value = data.data;
+    dataList.value = data.list;
     pagination.total = data.total;
     pagination.pageSize = data.page_size;
     pagination.currentPage = data.page;
@@ -303,7 +303,7 @@ export function useRole(treeRef: Ref) {
             type: "success" // 成功提示
           });
         } else {
-          message(res.message, { type: "error" }); // 失败提示
+          message(res.msg, { type: "error" }); // 失败提示
         }
       }
     );

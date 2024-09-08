@@ -130,7 +130,7 @@ export function useRole(tableRef: Ref) {
   async function onSearch() {
     loading.value = true;
     const { data } = await getLoginLogsList(toRaw(form));
-    dataList.value = data;
+    dataList.value = data.list;
 
     setTimeout(() => {
       loading.value = false;

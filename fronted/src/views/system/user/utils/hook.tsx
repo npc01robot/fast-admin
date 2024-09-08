@@ -21,7 +21,11 @@ import {
   getRoleIds,
   getDeptList,
   getUserList,
-  getAllRoleList
+  getAllRoleList,
+  createUser,
+  updateUser,
+  deleteUser,
+  changePassword, updateUserRole
 } from "@/api/system";
 import {
   ElForm,
@@ -105,15 +109,15 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     },
     {
       label: "性别",
-      prop: "sex",
+      prop: "gender",
       minWidth: 90,
       cellRenderer: ({ row, props }) => (
         <el-tag
           size={props.size}
-          type={row.sex === 1 ? "danger" : null}
+          type={row.gender === 1 ? "danger" : null}
           effect="plain"
         >
-          {row.sex === 1 ? "女" : "男"}
+          {row.gender === 1 ? "女" : "男"}
         </el-tag>
       )
     },
@@ -232,8 +236,14 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   }
 
   function handleDelete(row) {
-    message(`您删除了用户编号为${row.id}的这条数据`, { type: "success" });
-    onSearch();
+    deleteUser(row.id).then(res => {
+      if (!res || res.success) {
+        message(`您删除了用户编号为${row.id}的这条数据`, { type: "success" });
+        onSearch();
+      } else {
+        message(res.msg, { type: "error" });
+      }
+    });
   }
 
   function handleSizeChange(val: number) {
@@ -273,7 +283,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   async function onSearch() {
     loading.value = true;
     const { data } = await getUserList(toRaw(form));
-    dataList.value = data.data;
+    dataList.value = data.list;
     pagination.total = data.total;
     pagination.pageSize = data.page_size;
     pagination.currentPage = data.page;
@@ -315,13 +325,13 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         formInline: {
           title,
           higherDeptOptions: formatHigherDeptOptions(higherDeptOptions.value),
-          parentId: row?.dept.id ?? 0,
+          deptId: row?.dept.id ?? null,
           nickname: row?.nickname ?? "",
           username: row?.username ?? "",
-          password: row?.password ?? "",
+          password: row?.password ?? null,
           phone: row?.phone ?? "",
           email: row?.email ?? "",
-          sex: row?.sex ?? "",
+          gender: row?.gender ?? "",
           status: row?.status ?? 1,
           remark: row?.remark ?? ""
         }
@@ -347,11 +357,24 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
             console.log("curData", curData);
             // 表单规则校验通过
             if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
-              chores();
+              console.log("新增用户", curData);
+              createUser(curData).then(res => {
+                if (res.success) {
+                  chores();
+                } else {
+                  message(res.msg, { type: "error" });
+                }
+              });
             } else {
-              // 实际开发先调用修改接口，再进行下面操作
-              chores();
+              const updateData = options.props.formInline as FormItemProps;
+              delete updateData.password; // 密码不允许修改
+              updateUser(updateData, row.id).then(res => {
+                if (res.success) {
+                  chores();
+                } else {
+                  message(res.msg, { type: "error" });
+                }
+              });
             }
           }
         });
@@ -449,12 +472,16 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       beforeSure: done => {
         ruleFormRef.value.validate(valid => {
           if (valid) {
-            // 表单规则校验通过
-            message(`已成功重置 ${row.username} 用户的密码`, {
-              type: "success"
+            changePassword({ password: pwdForm.newPwd }, row.id).then(res => {
+              if (res.success) {
+                message(`已成功重置 ${row.username} 用户的密码`, {
+                  type: "success"
+                });
+              } else {
+                message(res.msg, { type: "error" });
+              }
             });
-            console.log(pwdForm.newPwd);
-            // 根据实际业务使用pwdForm.newPwd和row里的某些字段去调用重置用户密码接口即可
+            // 表单规则校验通过
             done(); // 关闭弹框
             onSearch(); // 刷新表格数据
           }
@@ -466,7 +493,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   /** 分配角色 */
   async function handleRole(row) {
     // 选中的角色列表
-    const ids = (await getRoleIds({ userId: row.id })).data ?? [];
+    const ids = (await getRoleIds(row.id)).data ?? [];
     addDialog({
       title: `分配 ${row.username} 用户的角色`,
       props: {
@@ -486,6 +513,15 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       beforeSure: (done, { options }) => {
         const curData = options.props.formInline as RoleFormItemProps;
         console.log("curIds", curData.ids);
+        updateUserRole({ ids: curData.ids }, row.id).then(res => {
+          if (res.success) {
+            message(`已成功分配 ${row.username} 用户的角色`, {
+              type: "success"
+            });
+          } else {
+            message(res.msg, { type: "error" });
+          }
+        });
         // 根据实际业务使用curData.ids和row里的某些字段去调用修改角色接口即可
         done(); // 关闭弹框
       }

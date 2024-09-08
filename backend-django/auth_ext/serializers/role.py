@@ -28,3 +28,10 @@ class RoleMenuSerializer(serializers.ModelSerializer):
         if menu_list is not None:
             instance.menu.set(menu_list)
         return super().update(instance, validated_data)
+
+class RoleListSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(read_only=True)
+    class Meta:
+        model = Role
+        fields = ['id', 'name']

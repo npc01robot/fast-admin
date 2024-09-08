@@ -17,7 +17,7 @@ class PageNumberPaginationExt(PageNumberPagination):
             ('total', self.page.paginator.count),
             # ('next', self.get_next_link()),
             # ('previous', self.get_previous_link()),
-            ('data', data)
+            ('list', data)
         ]))
 
 class FormatPageNumberPaginationExt(PageNumberPagination):

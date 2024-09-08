@@ -9,6 +9,7 @@ class MenuViewSet(viewsets.ModelViewSet):
     queryset = Menu.objects.filter(is_deleted=False).all()
     serializer_class = MenuSerializer
     permission_classes = []
+    pagination_class = None
 
 class MenuTreeViewSet(generics.ListAPIView):
     queryset = Menu.objects.filter(is_deleted=False).all()

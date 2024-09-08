@@ -1,5 +1,6 @@
 import datetime
 
+from auth_ext.models.department import Department
 from auth_ext.models.user import AuthExtUser
 from django.contrib.auth.hashers import check_password, make_password
 from fast.settings import SIMPLE_JWT
@@ -7,6 +8,8 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from utils.storage import file_system_storage
 
 
 class AuthExtTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -58,7 +61,8 @@ class AuthExtTokenObtainPairSerializer(TokenObtainPairSerializer):
         data["expires"] = expire  # 有效期
         # 用户名
         data["username"] = self.user.username
-        data["roles"] = self.user.roles
+        roles = self.user.roles.values_list("code", flat=True)
+        data["roles"] = roles
         data["accessToken"] = data.pop("access")
         data["refreshToken"] = data.pop("refresh")
 
@@ -129,3 +133,72 @@ class AuthRefreshTokenSerializer(serializers.Serializer):
             refresh.set_exp()
             refresh.set_iat()
         return data
+
+
+class AuthUserInfoSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    username = serializers.CharField()
+    nickname = serializers.CharField()
+    avatar = serializers.CharField(required=False)
+    phone = serializers.CharField()
+    email = serializers.EmailField()
+    gender = serializers.CharField(default=0)
+    dept = serializers.SerializerMethodField()
+    depart_id = serializers.IntegerField(write_only=True, required=False)
+    password = serializers.CharField(write_only=True, required=False)
+    status = serializers.BooleanField()
+    remark = serializers.CharField(required=False, default="", allow_blank=True)
+
+    def get_dept(self, obj):
+        if obj.dept:
+            return {"id": obj.dept.id, "name": obj.dept.name}
+        return {}
+
+    def validate(self, attrs):
+        depart_id = attrs.pop("depart_id", None)
+        if depart_id:
+            dept = Department.objects.filter(id=depart_id).first()
+            attrs["dept"] = dept
+        return attrs
+
+    def create(self, validated_data):
+        self.validated_data["password"] = make_password(
+            self.validated_data.pop("password")
+        )
+        user = AuthExtUser.objects.create(**validated_data)
+        return user
+
+    def update(self, instance, validated_data):
+        instance.username = validated_data.get("username", instance.username)
+        instance.nickname = validated_data.get("nickname", instance.nickname)
+        instance.phone = validated_data.get("phone", instance.phone)
+        instance.email = validated_data.get("email", instance.email)
+        instance.gender = validated_data.get("gender", instance.gender)
+        instance.dept = validated_data.get("dept", instance.dept)
+        instance.status = validated_data.get("status", instance.status)
+        instance.remark = validated_data.get("remark", instance.remark)
+        instance.save()
+        return instance
+
+    class Meta:
+        model = AuthExtUser
+        fields = "__all__"
+
+class AuthUserPasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        password = self.initial_data.pop("password", None)
+        if not password:
+            raise serializers.ValidationError("密码不能为空！")
+        self.initial_data["password"] = make_password(password)
+        return attrs
+
+    def update(self, instance, validated_data):
+        instance.password = validated_data.get("password", instance.password)
+        instance.save()
+        return instance
+
+    class Meta:
+        model = AuthExtUser
+        fields = ["password"]
