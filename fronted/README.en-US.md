@@ -18,17 +18,17 @@ Seek innovation in stability and see the future in technology
 
 The simplified version is based on the shelf extracted from [vue-pure-admin](https://github.com/pure-admin/vue-pure-admin), which contains main functions and is more suitable for actual project development. The packaged size is introduced globally [element-plus](https://element-plus.org) is still below `2.3MB`, and the full version of the code will be permanently synchronized. After enabling `brotli` compression and `cdn` to replace the local library mode, the package size is less than `350kb`
 
-[Click to view the non-internationalized version](https://github.com/pure-admin/pure-admin-thin)  
+[Click to view the non-internationalized version](https://github.com/pure-admin/pure-admin-thin)
 [Click to view Internationalization version](https://github.com/pure-admin/pure-admin-thin/tree/i18n)
 
 ## Supporting video
 
-[Click me to view UI design](https://www.bilibili.com/video/BV17g411T7rq)  
+[Click me to view UI design](https://www.bilibili.com/video/BV17g411T7rq)
 [Click me to view the rapid development tutorial](https://www.bilibili.com/video/BV1kg411v7QT)
 
 ## Nanny-level documents
 
-[Click me to view vue-pure-admin documentation](https://pure-admin.github.io/pure-admin-doc)  
+[Click me to view vue-pure-admin documentation](https://pure-admin.github.io/pure-admin-doc)
 [Click me to view @pureadmin/utils documentation](https://pure-admin-utils.netlify.app)
 
 ## Quality service, software outsourcing, sponsorship support
@@ -212,8 +212,8 @@ reference [vue](https://github.com/vuejs/vue/blob/dev/.github/COMMIT_CONVENTION.
 
 ## Browser support
 
-It is recommended to use `Chrome`, `Edge`, and `Firefox` browsers for local development. The author commonly uses the latest version of `Chrome` browser.  
-In actual use, I feel that `Firefox` is smoother in animation than other browsers, but the author is used to using `Chrome`. It depends on personal preference.  
+It is recommended to use `Chrome`, `Edge`, and `Firefox` browsers for local development. The author commonly uses the latest version of `Chrome` browser.
+In actual use, I feel that `Firefox` is smoother in animation than other browsers, but the author is used to using `Chrome`. It depends on personal preference.
 For more detailed browser compatibility support, please see [Which browsers does Vue support? ](https://vuejs.org/about/faq.html#what-browsers-does-vue-support) and [Vite browser compatibility](https://vitejs.dev/guide/build.html#browser-compatibility)
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>IE | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari |

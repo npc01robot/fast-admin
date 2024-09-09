@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+
 import datetime
 from pathlib import Path
 
@@ -20,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-9^7rd^@n@)_b#%rq4a_codxx%^q@ez!1$$)7pqw5dgi^n(-1sm'
+SECRET_KEY = "django-insecure-9^7rd^@n@)_b#%rq4a_codxx%^q@ez!1$$)7pqw5dgi^n(-1sm"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,51 +32,48 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-
-    'rest_framework',
-    'django_filters',
-    'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist',
-
-    'auth_ext',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "rest_framework",
+    "django_filters",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+    "auth_ext",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'fast.urls'
+ROOT_URLCONF = "fast.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'fast.wsgi.application'
+WSGI_APPLICATION = "fast.wsgi.application"
 
 
 # Database
@@ -83,54 +81,49 @@ WSGI_APPLICATION = 'fast.wsgi.application'
 
 DATABASES = {
     "default": {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'yinbao',
-        'USER': 'root',
-        'PASSWORD': 'toor',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "yinbao",
+        "USER": "root",
+        "PASSWORD": "toor",
+        "HOST": "localhost",
+        "PORT": "3306",
     }
 }
-AUTH_USER_MODEL = 'auth_ext.AuthExtUser'
+AUTH_USER_MODEL = "auth_ext.AuthExtUser"
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS':  'rest_framework_ext.pagination.PageNumberPaginationExt',
-    'PAGE_SIZE': 20,
-
+    "DEFAULT_PAGINATION_CLASS": "rest_framework_ext.pagination.PageNumberPaginationExt",
+    "PAGE_SIZE": 20,
     # 过滤配置
-    'DEFAULT_FILTER_BACKENDS': (
+    "DEFAULT_FILTER_BACKENDS": (
         # 'rest_framework_ext.filters.UserFilter',  # 根据用户进行筛选
-        'django_filters.rest_framework.DjangoFilterBackend',
-        'rest_framework.filters.SearchFilter',
-        'rest_framework.filters.OrderingFilter',
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
     ),
-
     # auth
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',  # 使用rest_framework_simplejwt验证身份
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",  # 使用rest_framework_simplejwt验证身份
         # 'rest_framework.authentication.SessionAuthentication',
         # 'rest_framework.authentication.BasicAuthentication'
     ],
-
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated'  # 默认权限为验证用户
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated"  # 默认权限为验证用户
     ],
     # 全局配置异常模块
-    'EXCEPTION_HANDLER': 'rest_framework_ext.exception.custom_exception_handler',
+    "EXCEPTION_HANDLER": "rest_framework_ext.exception.custom_exception_handler",
     # 修改默认返回JSON的renderer的类
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework_ext.response.CustomRenderer',
-    ),
+    "DEFAULT_RENDERER_CLASSES": ("rest_framework_ext.response.CustomRenderer",),
 }
 
 # AUTH_USER_MODEL = 'auth_ext.AuthUser'
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=7),
-    'USER_ID_FIELD': 'id',
-    'USER_ID_CLAIM': 'user_code',
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
+    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=7),
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_code",
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
@@ -141,16 +134,16 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -178,9 +171,9 @@ USE_L10N = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

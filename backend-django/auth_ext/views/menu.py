@@ -1,8 +1,7 @@
-from rest_framework import viewsets, generics
-from rest_framework.response import Response
-
 from auth_ext.models.menu import Menu
 from auth_ext.serializers.menu import MenuSerializer, MenuTreeSerializer
+from rest_framework import generics, viewsets
+from rest_framework.response import Response
 
 
 class MenuViewSet(viewsets.ModelViewSet):
@@ -10,6 +9,7 @@ class MenuViewSet(viewsets.ModelViewSet):
     serializer_class = MenuSerializer
     permission_classes = []
     pagination_class = None
+
 
 class MenuTreeViewSet(generics.ListAPIView):
     queryset = Menu.objects.filter(is_deleted=False).all()

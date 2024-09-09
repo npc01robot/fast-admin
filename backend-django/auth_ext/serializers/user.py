@@ -8,7 +8,6 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from utils.storage import file_system_storage
 
 
@@ -183,6 +182,7 @@ class AuthUserInfoSerializer(serializers.Serializer):
     class Meta:
         model = AuthExtUser
         fields = "__all__"
+
 
 class AuthUserPasswordSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)

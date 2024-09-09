@@ -1,13 +1,13 @@
 from auth_ext.views.department import DepartmentViewSet
-from auth_ext.views.menu import MenuViewSet, MenuTreeViewSet
+from auth_ext.views.menu import MenuTreeViewSet, MenuViewSet
 from auth_ext.views.role import RoleViewSet
 from auth_ext.views.routes import AsyncRoute
 from auth_ext.views.user import (
     AuthExtUserView,
     AuthRefreshToken,
+    AuthUserInfoViewSet,
     AuthUserMineView,
     AuthUserViewSet,
-    AuthUserInfoViewSet,
 )
 from django.urls import re_path
 from rest_framework.routers import DefaultRouter
@@ -25,7 +25,7 @@ urlpatterns = [
     re_path("sign/", AuthUserViewSet.as_view(), name="user"),
     re_path("asyncRoutes/", AsyncRoute.as_view(), name="asyncRoutes"),
     re_path("mine/", AuthUserMineView.as_view(), name="mine"),
-    re_path("menu/menu_tree/", MenuTreeViewSet.as_view(), name="role-menu")
+    re_path("menu/menu_tree/", MenuTreeViewSet.as_view(), name="role-menu"),
 ]
 
 

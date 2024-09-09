@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 
 import jwt
 from flask import current_app
@@ -15,22 +15,28 @@ def generate_tokens(username, need_refresh_token=True):
     # '生成时间信息'
     current_time = datetime.utcnow()
     # '指定有效期  业务token -- 2小时'
-    expire_time = current_time + timedelta(hours=current_app.config['JWT_EXPIRY_HOURS'] + 8)
+    expire_time = current_time + timedelta(
+        hours=current_app.config["JWT_EXPIRY_HOURS"] + 8
+    )
 
-    expire = expire_time.strftime('%Y/%m/%d %H:%M:%S')
+    expire = expire_time.strftime("%Y/%m/%d %H:%M:%S")
     # '生成业务token  refresh 标识是否是刷新token''
-    token = generate_jwt({'username': username, 'refresh': False}, expiry=expire_time)
+    token = generate_jwt({"username": username, "refresh": False}, expiry=expire_time)
 
     # '给刷新token设置一个默认值None'
     refresh_token = None
     # '根据传入的参数判断是否需要生成刷新token''
     # '不需要生成的传入need_refresh_token=False,需要的传入True或不传使用默认值'
     if need_refresh_token:
-        '指定有效期  刷新token -- 14天'
-        refresh_expires = current_time + timedelta(days=current_app.config['JWT_REFRESH_DAYS'])
+        "指定有效期  刷新token -- 14天"
+        refresh_expires = current_time + timedelta(
+            days=current_app.config["JWT_REFRESH_DAYS"]
+        )
 
-        '生成刷新token'
-        refresh_token = generate_jwt({'username': username, 'refresh': True}, expiry=refresh_expires)
+        "生成刷新token"
+        refresh_token = generate_jwt(
+            {"username": username, "refresh": True}, expiry=refresh_expires
+        )
     # '返回这两个token''
     return token, refresh_token, expire
 
@@ -43,11 +49,11 @@ def generate_jwt(payload, expiry, secret=None):
     :param secret: 密钥
     :return: jwt
     """
-    _payload = {'exp': expiry}
+    _payload = {"exp": expiry}
     _payload.update(payload)
 
     if not secret:
-        secret = current_app.config['JWT_SECRET']
+        secret = current_app.config["JWT_SECRET"]
 
-    token = jwt.encode(_payload, secret, algorithm='HS256')
+    token = jwt.encode(_payload, secret, algorithm="HS256")
     return token

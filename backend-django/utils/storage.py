@@ -12,6 +12,7 @@ _FileContent = Union[str, bytes, bytearray, io.BytesIO, IO, ContentFile]
 
 class FileSystemStorage(DjangoFileSystemStorage):
     base_url = "/media/"
+
     def save(self, name: str, content: _FileContent) -> str:
         if isinstance(content, io.BytesIO):
             content = content.getvalue()

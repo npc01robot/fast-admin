@@ -1,13 +1,14 @@
-from rest_framework.decorators import action
-
 from auth_ext.models.role import Role
 from auth_ext.models.user import AuthExtUser
 from auth_ext.serializers.user import (
     AuthExtTokenObtainPairSerializer,
     AuthRefreshTokenSerializer,
-    AuthUserSerializer, AuthUserInfoSerializer, AuthUserPasswordSerializer,
+    AuthUserInfoSerializer,
+    AuthUserPasswordSerializer,
+    AuthUserSerializer,
 )
 from rest_framework import generics, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenRefreshView, TokenViewBase
 
@@ -74,15 +75,14 @@ class AuthUserInfoViewSet(viewsets.ModelViewSet):
     @action(methods=["GET"], detail=True)
     def role_list(self, request, pk=None):
         obj = self.get_object()
-        roles = obj.roles.all().values('id', 'name')
+        roles = obj.roles.all().values("id", "name")
         return Response(roles, status=status.HTTP_200_OK)
 
     @action(methods=["PUT"], detail=True)
     def add_roles(self, request, pk=None):
         obj = self.get_object()
-        ids = request.data.get('ids')
+        ids = request.data.get("ids")
         roles = Role.objects.filter(id__in=ids)
         obj.roles.set(roles)
         obj.save()
         return Response(status=status.HTTP_200_OK)
-

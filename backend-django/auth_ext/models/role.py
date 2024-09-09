@@ -1,6 +1,5 @@
-from django.db import models
-
 from auth_ext.models.menu import Menu
+from django.db import models
 
 
 class Role(models.Model):
@@ -34,7 +33,6 @@ class Role(models.Model):
     def delete(self, using=None, keep_parents=False):
         self.is_deleted = True
         self.save()
-
 
 
 class RoleMenu(models.Model):

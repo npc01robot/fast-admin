@@ -19,17 +19,17 @@
 
 精简版本是基于 [vue-pure-admin](https://github.com/pure-admin/vue-pure-admin) 提炼出的架子，包含主体功能，更适合实际项目开发，打包后的大小在全局引入 [element-plus](https://element-plus.org) 的情况下仍然低于 `2.3MB`，并且会永久同步完整版的代码。开启 `brotli` 压缩和 `cdn` 替换本地库模式后，打包大小低于 `350kb`
 
-[点我查看非国际化精简版本](https://github.com/pure-admin/pure-admin-thin)  
+[点我查看非国际化精简版本](https://github.com/pure-admin/pure-admin-thin)
 [点我查看国际化精简版本](https://github.com/pure-admin/pure-admin-thin/tree/i18n)
 
 ## 配套视频
 
-[点我查看 UI 设计](https://www.bilibili.com/video/BV17g411T7rq)  
+[点我查看 UI 设计](https://www.bilibili.com/video/BV17g411T7rq)
 [点我查看快速开发教程](https://www.bilibili.com/video/BV1kg411v7QT)
 
 ## 配套保姆级文档
 
-[点我查看 vue-pure-admin 文档](https://pure-admin.github.io/pure-admin-doc)  
+[点我查看 vue-pure-admin 文档](https://pure-admin.github.io/pure-admin-doc)
 [点我查看 @pureadmin/utils 文档](https://pure-admin-utils.netlify.app)
 
 ## 优质服务、软件外包、赞助支持
@@ -213,8 +213,8 @@ docker run -dp 8080:80  --name pure-admin vue-pure-admin
 
 ## 浏览器支持
 
-本地开发推荐使用 `Chrome`、`Edge`、`Firefox` 浏览器，作者常用的是最新版 `Chrome` 浏览器  
-实际使用中感觉 `Firefox` 在动画上要比别的浏览器更加丝滑，只是作者用 `Chrome` 已经习惯了，看个人爱好选择吧  
+本地开发推荐使用 `Chrome`、`Edge`、`Firefox` 浏览器，作者常用的是最新版 `Chrome` 浏览器
+实际使用中感觉 `Firefox` 在动画上要比别的浏览器更加丝滑，只是作者用 `Chrome` 已经习惯了，看个人爱好选择吧
 更详细的浏览器兼容性支持请看 [Vue 支持哪些浏览器？](https://cn.vuejs.org/about/faq.html#what-browsers-does-vue-support) 和 [Vite 浏览器兼容性](https://cn.vitejs.dev/guide/build#browser-compatibility)
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>IE | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari |

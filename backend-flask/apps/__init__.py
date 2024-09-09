@@ -1,11 +1,11 @@
-from flask_cors import CORS
-
-from flask import Flask  # flask
-from flask_migrate import Migrate
 from apps.models import db
-from config.routes import register_routes
 from apps.utils.middlewares import jwt_authentication
 from config import config
+from config.routes import register_routes
+from flask import Flask  # flask
+from flask_cors import CORS
+from flask_migrate import Migrate
+
 app = Flask(__name__)
 
 CORS(app)

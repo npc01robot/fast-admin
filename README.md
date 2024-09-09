@@ -33,7 +33,7 @@
 ## 后端配套
 ### 如果你是后端开发，需了解整体框架结构
 ```- docker-compose.yml  #docker-compose 运行文件
-- Dockerfile   
+- Dockerfile
 - env_dockerfile  # docker环境文件
 - gunicorn.conf   # 项目是由gunicorn启动
 - nginx.conf      # 基本nginx

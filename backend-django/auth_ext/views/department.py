@@ -8,4 +8,3 @@ class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.filter(is_deleted=False).all()
     permission_classes = []
     pagination_class = None
-
