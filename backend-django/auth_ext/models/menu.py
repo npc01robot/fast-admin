@@ -11,6 +11,7 @@ class Menu(models.Model):
     id = models.AutoField(primary_key=True)
     parent = models.ForeignKey(
         "self",
+        related_name="children",
         default=None,
         null=True,
         blank=True,
