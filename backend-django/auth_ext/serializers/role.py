@@ -1,6 +1,4 @@
-from auth_ext.models.menu import Menu
 from auth_ext.models.role import Role
-from django.db import transaction
 from rest_framework import serializers
 
 

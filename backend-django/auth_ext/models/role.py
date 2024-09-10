@@ -31,6 +31,8 @@ class Role(models.Model):
         managed = True
 
     def delete(self, using=None, keep_parents=False):
+        if self.code == "admin":
+            raise Exception("不能删除admin角色!")
         self.is_deleted = True
         self.save()
 

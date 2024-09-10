@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 
 
 class Department(models.Model):
@@ -45,6 +45,11 @@ class Department(models.Model):
     update_time = models.DateTimeField(auto_now=True, verbose_name="更新时间")
 
     class Meta(object):
-        db_table = "department"
+        db_table = "auth_ext_department"
         verbose_name = "部门表"
         managed = True
+
+    def delete(self, using=None, keep_parents=False):
+        with transaction.atomic(using=using):
+            self.is_deleted = True
+            self.save()

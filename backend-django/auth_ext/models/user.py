@@ -2,7 +2,7 @@ from auth_ext.models.department import Department
 from auth_ext.models.permission import Permission
 from auth_ext.models.role import Role
 from django.contrib.auth.models import AbstractUser
-from django.db import models
+from django.db import models, transaction
 
 
 class AuthExtUser(AbstractUser, models.Model):
@@ -44,6 +44,13 @@ class AuthExtUser(AbstractUser, models.Model):
         verbose_name = "用户表"
         managed = True
 
+    def delete(self, using=None, keep_parents=False):
+        if self.username == "admin":
+            raise Exception("不能删除admin用户")
+        with transaction.atomic(using=using):
+            self.is_deleted = True
+            self.save()
+
 
 class LoginLog(models.Model):
     user = models.ForeignKey(AuthExtUser, on_delete=models.CASCADE)
@@ -82,7 +89,7 @@ class UserRoles(models.Model):
     is_deleted = models.BooleanField(default=False, verbose_name="是否移除")
 
     class Meta(object):
-        db_table = "user_roles"
+        db_table = "auth_ext_user_roles"
         verbose_name = "用户角色关系表"
         managed = True
 
@@ -95,6 +102,6 @@ class UserPermissions(models.Model):
     is_deleted = models.BooleanField(default=False, verbose_name="是否移除")
 
     class Meta(object):
-        db_table = "user_permissions"
+        db_table = "auth_ext_user_permissions"
         verbose_name = "用户权限关系表"
         managed = True

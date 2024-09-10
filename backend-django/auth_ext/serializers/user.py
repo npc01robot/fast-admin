@@ -1,6 +1,7 @@
 import datetime
 
 from auth_ext.models.department import Department
+from auth_ext.models.role import Role
 from auth_ext.models.user import AuthExtUser
 from django.contrib.auth.hashers import check_password, make_password
 from fast.settings import SIMPLE_JWT
@@ -80,14 +81,24 @@ class AuthUserSerializer(serializers.ModelSerializer):
 
     def save(self):
         if self.validated_data["username"] == "admin":
-            self.validated_data["roles"] = ["admin", "common"]
+            # 初始化权限
+            admin = Role.objects.filter(code="admin").first()
+            if not admin:
+                admin = Role.objects.create(code="admin", name="管理员", remark="admin")
+            common = Role.objects.filter(code="common").first()
+            if not common:
+                common = Role.objects.create(
+                    code="common", name="普通用户", remark="common"
+                )
+
+            self.validated_data["roles"] = [admin, common]
             self.validated_data["permissions"] = [
                 "permission:btn:add",
                 "permission:btn:edit",
                 "permission:btn:delete",
             ]
         else:
-            self.validated_data["roles"] = ["common"]
+            self.validated_data["roles"] = [Role.objects.filter(code="common").first()]
             self.validated_data["permissions"] = [
                 "permission:btn:add",
                 "permission:btn:edit",
