@@ -1,5 +1,6 @@
 # 路由生成
 # todo: 路由生成功能待完善
+from auth_ext.models.menu import Menu
 from auth_ext.models.user import AuthExtUser
 from rest_framework import generics
 from rest_framework.response import Response
@@ -11,6 +12,24 @@ class AsyncRoute(generics.ListAPIView):
     """
 
     def get(self, request, *args, **kwargs):
+        menu_list = []
+        role_list = []
+        user = AuthExtUser.objects.filter(pk=request.auth.payload["user_code"]).first()
+        if not user:
+            raise ValueError("User not found")
+        roles = user.roles.filter(status=1, is_deleted=False).all()
+        if "admin" in roles.values_list("code", flat=True):
+            menu_list = Menu.objects.filter(
+                is_deleted=False, parent__isnull=False
+            ).all()
+            role_list = ["admin"]
+        else:
+            for role in roles:
+                menu_list.extend(
+                    role.menu.filter(is_deleted=False, parent__isnull=True).all()
+                )  # 顶级菜单
+                role_list.append(role.code)
+
         def build_menu_tree(menu, roles):
             res = {
                 "path": menu.path,
@@ -21,41 +40,17 @@ class AsyncRoute(generics.ListAPIView):
                     "roles": roles,
                 },
             }
-            all_children = []
             # 过滤尚未删除的子菜单
             children_menu = menu.children.filter(is_deleted=False)
-            if not children_menu:
-                return res
-
-            # 处理子菜单
-            for child in children_menu:
-                # 递归调用，处理孙菜单以及更深层级的菜单
-                temp_children = build_menu_tree(child, roles)
-                if temp_children:
-                    all_children.append(temp_children)
-
-            if all_children:
-                res["children"] = all_children
+            if children_menu:
+                res["children"] = [
+                    build_menu_tree(child, roles) for child in children_menu
+                ]
             return res
 
-        menu_list = []
-        role_list = []
-        user = AuthExtUser.objects.filter(pk=request.auth.payload["user_code"]).first()
-        roles = user.roles.filter(status=1, is_deleted=False).all()
-
-        for role in roles:
-            menu_list.extend(
-                role.menu.filter(is_deleted=False, parent__isnull=True).all()
-            )  # 顶级菜单
-            role_list.append(role.code)
-        menu_list = list(set(menu_list))  # 去重
-        data = []
-        for menu in menu_list:
-            children = [
-                build_menu_tree(child, role_list)
-                for child in menu.children.filter(is_deleted=False).all()
-            ]
-            data.append(
+        try:
+            menu_list = list(set(menu_list))  # 去重
+            data = [
                 {
                     "path": menu.path,
                     "meta": {
@@ -63,10 +58,66 @@ class AsyncRoute(generics.ListAPIView):
                         "title": menu.title,
                         "rank": menu.rank,
                     },
-                    "children": children,
+                    "children": [
+                        build_menu_tree(child, role_list)
+                        for child in menu.children.filter(is_deleted=False).all()
+                    ],
+                }
+                for menu in menu_list
+            ]
+        except Exception as e:
+            # 记录错误日志
+            print(f"Error occurred: {e}")
+            data = []
+        if "admin" in role_list:
+            data.append(
+                {
+                    "path": "/system",
+                    "meta": {
+                        "icon": "ri:settings-3-line",
+                        "title": "menus.pureSysManagement",
+                        "rank": 20,
+                    },
+                    "children": [
+                        {
+                            "path": "/system/user/index",
+                            "name": "SystemUser",
+                            "meta": {
+                                "icon": "ri:admin-line",
+                                "title": "menus.pureUser",
+                                "roles": ["admin"],
+                            },
+                        },
+                        {
+                            "path": "/system/role/index",
+                            "name": "SystemRole",
+                            "meta": {
+                                "icon": "ri:admin-fill",
+                                "title": "menus.pureRole",
+                                "roles": ["admin"],
+                            },
+                        },
+                        {
+                            "path": "/system/menu/index",
+                            "name": "SystemMenu",
+                            "meta": {
+                                "icon": "ep:menu",
+                                "title": "menus.pureSystemMenu",
+                                "roles": ["admin"],
+                            },
+                        },
+                        {
+                            "path": "/system/dept/index",
+                            "name": "SystemDept",
+                            "meta": {
+                                "icon": "ri:git-branch-line",
+                                "title": "menus.pureDept",
+                                "roles": ["admin"],
+                            },
+                        },
+                    ],
                 }
             )
-
         return Response(data)
 
         # data = [
