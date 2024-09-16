@@ -1,4 +1,5 @@
 from auth_ext.views.department import DepartmentViewSet
+from auth_ext.views.media import MediaFileViewSet
 from auth_ext.views.menu import MenuTreeViewSet, MenuViewSet
 from auth_ext.views.role import RoleViewSet
 from auth_ext.views.routes import AsyncRoute
@@ -18,6 +19,7 @@ router.register(r"role", RoleViewSet, basename="role")
 # 菜单管理
 router.register(r"menu", MenuViewSet, basename="menu")
 router.register("user", AuthUserInfoViewSet, basename="user")
+router.register(r"media", MediaFileViewSet, basename="media")
 # 刷新JWT有效期接口
 urlpatterns = [
     re_path(r"login/$", AuthExtUserView.as_view(), name="token"),

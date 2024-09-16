@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<FormProps>(), {
     phone: "",
     email: "",
     gender: "",
-    status: 1,
+    status: true,
     roles: [],
     permissions: [],
     remark: ""
@@ -25,15 +25,11 @@ const props = withDefaults(defineProps<FormProps>(), {
 
 const sexOptions = [
   {
-    value: 0,
-    label: "未知"
-  },
-  {
-    value: 1,
+    value: "1",
     label: "男"
   },
   {
-    value: 2,
+    value: "2",
     label: "女"
   }
 ];

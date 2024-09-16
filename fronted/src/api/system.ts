@@ -22,7 +22,7 @@ type ResultTable = {
 
 /** 获取系统管理-用户管理列表 */
 export const getUserList = (data?: object) => {
-  return http.request<ResultTable>("get", "/api/auth/user/", { data });
+  return http.request<ResultTable>("get", "/api/auth/user/", { params: data });
 };
 /** 创建系统管理-用户管理 */
 export const createUser = (data?: object) => {
@@ -60,6 +60,13 @@ export const getRoleIds = (id?: number) => {
 /** 系统管理-用户管理-更新用户角色 */
 export const updateUserRole = (data?: object, id?: number) => {
   return http.request<Result>("put", `/api/auth/user/${id}/add_roles/`, {
+    data
+  });
+};
+
+/** 系统管理-用户管理- 批量删除用户 */
+export const batchDeleteUser = (data?: object) => {
+  return http.request<Result>("delete", "/api/auth/user/batch_delete/", {
     data
   });
 };

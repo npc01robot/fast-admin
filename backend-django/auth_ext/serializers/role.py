@@ -22,7 +22,7 @@ class RoleMenuSerializer(serializers.ModelSerializer):
         fields = ["id", "menu_list"]
 
     def update(self, instance, validated_data):
-        menu_list = validated_data.pop("menu_list", None)
+        menu_list = self.initial_data.get("menu_list")
         if menu_list is not None:
             instance.menu.set(menu_list)
         return super().update(instance, validated_data)

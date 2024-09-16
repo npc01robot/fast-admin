@@ -86,3 +86,9 @@ class AuthUserInfoViewSet(viewsets.ModelViewSet):
         obj.roles.set(roles)
         obj.save()
         return Response(status=status.HTTP_200_OK)
+
+    @action(methods=["DELETE"], detail=False)
+    def batch_delete(self, request):
+        ids = request.data.get("ids")
+        AuthExtUser.objects.filter(id__in=ids).update(is_deleted=True)
+        return Response(status=status.HTTP_200_OK)

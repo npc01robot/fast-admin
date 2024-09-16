@@ -149,7 +149,7 @@ class AuthUserInfoSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     username = serializers.CharField()
     nickname = serializers.CharField()
-    avatar = serializers.CharField(required=False)
+    avatar = serializers.CharField(required=False, allow_null=True)
     phone = serializers.CharField()
     email = serializers.EmailField()
     gender = serializers.CharField(default=0)
@@ -157,7 +157,7 @@ class AuthUserInfoSerializer(serializers.Serializer):
     depart_id = serializers.IntegerField(write_only=True, required=False)
     password = serializers.CharField(write_only=True, required=False)
     status = serializers.BooleanField()
-    remark = serializers.CharField(required=False, default="", allow_blank=True)
+    remark = serializers.CharField(required=False, allow_null=True,allow_blank=True)
 
     def get_dept(self, obj):
         if obj.dept:

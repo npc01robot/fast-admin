@@ -25,7 +25,8 @@ import {
   createUser,
   updateUser,
   deleteUser,
-  changePassword, updateUserRole
+  changePassword,
+  updateUserRole, batchDeleteUser
 } from "@/api/system";
 import {
   ElForm,
@@ -51,7 +52,9 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     deptId: "",
     username: "",
     phone: "",
-    status: ""
+    status: "",
+    page: 1,
+    page_size: 10
   });
   const formRef = ref();
   const ruleFormRef = ref();
@@ -141,8 +144,8 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
           size={scope.props.size === "small" ? "small" : "default"}
           loading={switchLoadMap.value[scope.index]?.loading}
           v-model={scope.row.status}
-          active-value={1}
-          inactive-value={0}
+          active-value={true}
+          inactive-value={false}
           active-text="已启用"
           inactive-text="已停用"
           inline-prompt
@@ -192,7 +195,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   function onChange({ row, index }) {
     ElMessageBox.confirm(
       `确认要<strong>${
-        row.status === 0 ? "停用" : "启用"
+        row.status === false ? "停用" : "启用"
       }</strong><strong style='color:var(--el-color-primary)'>${
         row.username
       }</strong>用户吗?`,
@@ -204,35 +207,54 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         dangerouslyUseHTMLString: true,
         draggable: true
       }
-    )
-      .then(() => {
-        switchLoadMap.value[index] = Object.assign(
-          {},
-          switchLoadMap.value[index],
-          {
-            loading: true
-          }
-        );
-        setTimeout(() => {
-          switchLoadMap.value[index] = Object.assign(
-            {},
-            switchLoadMap.value[index],
-            {
-              loading: false
-            }
-          );
-          message("已成功修改用户状态", {
-            type: "success"
-          });
-        }, 300);
-      })
-      .catch(() => {
-        row.status === 0 ? (row.status = 1) : (row.status = 0);
+    ).then(() => {
+      row.status = row.status === false;
+      updateUser(row, row.id).then(res => {
+        if (res.success) {
+          row.status === false ? (row.status = true) : (row.status = false);
+          updateUser(row, row.id)
+            .then(res => {
+              if (res.success) {
+                switchLoadMap.value[index] = Object.assign(
+                  {},
+                  switchLoadMap.value[index],
+                  {
+                    loading: true
+                  }
+                );
+                switchLoadMap.value[index] = Object.assign(
+                  {},
+                  switchLoadMap.value[index],
+                  {
+                    loading: false
+                  }
+                );
+                message("已成功修改用户状态", {
+                  type: "success"
+                });
+              } else {
+                message(res.msg, { type: "error" });
+              }
+            })
+            .catch(() => {
+              row.status === false ? (row.status = true) : (row.status = false);
+            });
+        }
       });
+    });
   }
 
   function handleUpdate(row) {
-    console.log(row);
+    updateUser(row, row.id).then(res => {
+      if (res.success) {
+        message("已成功修改用户信息", {
+          type: "success"
+        });
+        onSearch();
+      } else {
+        message(res.msg, { type: "error" });
+      }
+    });
   }
 
   function handleDelete(row) {
@@ -247,11 +269,13 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   }
 
   function handleSizeChange(val: number) {
-    console.log(`${val} items per page`);
+    form.page_size = val;
+    onSearch();
   }
 
   function handleCurrentChange(val: number) {
-    console.log(`current page: ${val}`);
+    form.page = val;
+    onSearch();
   }
 
   /** 当CheckBox选择项发生变化时会触发该事件 */
@@ -272,12 +296,18 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   function onbatchDel() {
     // 返回当前选中的行
     const curSelected = tableRef.value.getTableRef().getSelectionRows();
-    // 接下来根据实际业务，通过选中行的某项数据，比如下面的id，调用接口进行批量删除
-    message(`已删除用户编号为 ${getKeyList(curSelected, "id")} 的数据`, {
-      type: "success"
+    if (curSelected.length === 0) {
+      message("请先选择需要删除的用户", { type: "warning" });
+      return;
+    }
+    batchDeleteUser({ ids: getKeyList(curSelected, "id") }).then(res => {
+      if (res || res.success) {
+        message("批量删除成功", { type: "success" });
+        onSearch();
+      } else {
+        message(res.msg, { type: "error" });
+      }
     });
-    tableRef.value.getTableRef().clearSelection();
-    onSearch();
   }
 
   async function onSearch() {
@@ -287,10 +317,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     pagination.total = data.total;
     pagination.pageSize = data.page_size;
     pagination.currentPage = data.page;
-
-    setTimeout(() => {
-      loading.value = false;
-    }, 500);
+    loading.value = false;
   }
 
   const resetForm = formEl => {
