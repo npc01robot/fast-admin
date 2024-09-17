@@ -22,4 +22,4 @@ tests/**/coverage/
 tsconfig.tsbuildinfo
 migrations
 
-backend-dja/media/*
+media
