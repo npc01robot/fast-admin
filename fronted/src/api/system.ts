@@ -71,6 +71,12 @@ export const batchDeleteUser = (data?: object) => {
   });
 };
 
+/** 系统管理-用户管理- 上传头像 */
+export const uploadAvatar = (data?: object, id: number) => {
+  return http.request<Result>("post", `/api/auth/user/${id}/upload_avatar/`, {
+    data
+  });
+};
 /** 获取系统管理-角色管理列表 */
 export const getRoleList = (data?: object) => {
   return http.request<ResultTable>("get", "/api/auth/role/", { params: data });

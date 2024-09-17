@@ -124,6 +124,17 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
+```shell
+docker run \
+-p 9002:80 \
+--name nginx \
+-v /mnt/d/nginx/conf/conf.d:/etc/nginx/conf.d \
+-v /mnt/d/nginx/log:/var/log/nginx \
+-v /mnt/d/nginx/html:/usr/share/nginx/html \
+-d nginx:latest
+```
+
+
 
 ## 维护者
 Mr.Robot

@@ -21,3 +21,5 @@ tests/**/coverage/
 *.sln
 tsconfig.tsbuildinfo
 migrations
+
+backend-dja/media/*

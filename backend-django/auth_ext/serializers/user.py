@@ -4,7 +4,7 @@ from auth_ext.models.department import Department
 from auth_ext.models.role import Role
 from auth_ext.models.user import AuthExtUser
 from django.contrib.auth.hashers import check_password, make_password
-from fast.settings import SIMPLE_JWT
+from fast.settings import SIMPLE_JWT, BASE_URL
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.settings import api_settings
@@ -57,7 +57,6 @@ class AuthExtTokenObtainPairSerializer(TokenObtainPairSerializer):
         )
 
         expire = expire_time.strftime("%Y/%m/%d %H:%M:%S")
-
         data["expires"] = expire  # 有效期
         # 用户名
         data["username"] = self.user.username
@@ -74,6 +73,12 @@ class AuthUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     roles = serializers.ListField(read_only=True)
     permissions = serializers.ListField(read_only=True)
+    avatar = serializers.SerializerMethodField()
+
+    def get_avatar(self, obj):
+        if obj.avatar:
+            return BASE_URL + file_system_storage.url(obj.avatar)
+        return ""
 
     class Meta:
         model = AuthExtUser
@@ -149,7 +154,7 @@ class AuthUserInfoSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     username = serializers.CharField()
     nickname = serializers.CharField()
-    avatar = serializers.CharField(required=False, allow_null=True)
+    avatar = serializers.SerializerMethodField()
     phone = serializers.CharField()
     email = serializers.EmailField()
     gender = serializers.CharField(default=0)
@@ -157,6 +162,7 @@ class AuthUserInfoSerializer(serializers.Serializer):
     depart_id = serializers.IntegerField(write_only=True, required=False)
     password = serializers.CharField(write_only=True, required=False)
     status = serializers.BooleanField()
+    description = serializers.CharField(required=False, allow_null=True,allow_blank=True)
     remark = serializers.CharField(required=False, allow_null=True,allow_blank=True)
 
     def get_dept(self, obj):
@@ -164,6 +170,10 @@ class AuthUserInfoSerializer(serializers.Serializer):
             return {"id": obj.dept.id, "name": obj.dept.name}
         return {}
 
+    def get_avatar(self, obj):
+        if obj.avatar:
+            return BASE_URL + file_system_storage.url(obj.avatar)
+        return ""
     def validate(self, attrs):
         depart_id = attrs.pop("depart_id", None)
         if depart_id:
@@ -186,6 +196,7 @@ class AuthUserInfoSerializer(serializers.Serializer):
         instance.gender = validated_data.get("gender", instance.gender)
         instance.dept = validated_data.get("dept", instance.dept)
         instance.status = validated_data.get("status", instance.status)
+        instance.description = validated_data.get("description", instance.description)
         instance.remark = validated_data.get("remark", instance.remark)
         instance.save()
         return instance

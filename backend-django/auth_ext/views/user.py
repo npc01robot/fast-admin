@@ -12,6 +12,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenRefreshView, TokenViewBase
 
+from fast.settings import BASE_URL
+from utils.storage import save_download_file, save_upload_file, save_upload_base64_file, file_system_storage
+
 
 # 登录视图
 class AuthExtUserView(TokenViewBase):
@@ -51,19 +54,15 @@ class AuthRefreshToken(TokenRefreshView):
 
 
 # 用户信息
-class AuthUserMineView(generics.RetrieveAPIView):
-    serializer_class = AuthUserSerializer
-    queryset = AuthExtUser.objects.filter(is_deleted=False).all()
-    permission_classes = []
-
-    def get_object(self):
-        return self.request.user
-
-
 class AuthUserInfoViewSet(viewsets.ModelViewSet):
     queryset = AuthExtUser.objects.filter(is_deleted=False).all()
     serializer_class = AuthUserInfoSerializer
     permission_classes = []
+
+    @action(detail=False, methods=['GET'])
+    def mine(self, request):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=["PUT"], detail=True)
     def change_password(self, request, pk=None):
@@ -86,6 +85,16 @@ class AuthUserInfoViewSet(viewsets.ModelViewSet):
         obj.roles.set(roles)
         obj.save()
         return Response(status=status.HTTP_200_OK)
+
+    @action(methods=["POST"], detail=True)
+    def upload_avatar(self, request, pk=None):
+        obj = self.get_object()
+        avatar = request.data.get("base64")
+        file_path = save_upload_base64_file(avatar,obj.username)
+        obj.avatar = file_path
+        obj.save()
+        file_url = BASE_URL + file_system_storage.url(file_path)
+        return Response({"avatar":file_url},status=status.HTTP_200_OK)
 
     @action(methods=["DELETE"], detail=False)
     def batch_delete(self, request):

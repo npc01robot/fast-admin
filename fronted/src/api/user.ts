@@ -88,8 +88,8 @@ export const refreshTokenApi = (data?: object) => {
 };
 
 /** 账户设置-个人信息 */
-export const getMine = (data?: object) => {
-  return http.request<UserInfoResult>("get", "/api/auth/mine/", { data });
+export const getMine = () => {
+  return http.request<UserInfoResult>("get", `/api/auth/user/mine/`);
 };
 
 /** 账户设置-个人安全日志 */

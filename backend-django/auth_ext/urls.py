@@ -7,7 +7,6 @@ from auth_ext.views.user import (
     AuthExtUserView,
     AuthRefreshToken,
     AuthUserInfoViewSet,
-    AuthUserMineView,
     AuthUserViewSet,
 )
 from django.urls import re_path
@@ -26,7 +25,6 @@ urlpatterns = [
     re_path("refreshToken/", AuthRefreshToken.as_view(), name="token_refresh"),
     re_path("sign/", AuthUserViewSet.as_view(), name="user"),
     re_path("asyncRoutes/", AsyncRoute.as_view(), name="asyncRoutes"),
-    re_path("mine/", AuthUserMineView.as_view(), name="mine"),
     re_path("menu/menu_tree/", MenuTreeViewSet.as_view(), name="role-menu"),
 ]
 

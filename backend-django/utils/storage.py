@@ -1,5 +1,7 @@
+import base64
 import io
 import os
+import re
 from datetime import datetime
 from typing import IO, Optional, Union
 
@@ -69,20 +71,31 @@ def save_download_file(file_name: str, content: _FileContent):
     )
     return file_system_storage.save(file_name, content)
 
-
-def save_label_file(file_name: str, content: _FileContent):
-    """保存物流面单之类的文件, 自动生成年月日目录"""
-    from django.conf import settings
-
-    prefix = settings.FILE_LABEL_PREFIX
-    file_name = os.path.join(prefix, datetime.now().strftime("%Y%m%d/%H"), file_name)
+def save_upload_file(file_name: str, content: _FileContent):
+    """保存上传文件, 自动生成年月日目录"""
+    file_name = os.path.join(
+        "upload", datetime.now().strftime("%Y%m%d/%H"), file_name
+    )
     return file_system_storage.save(file_name, content)
 
+def base64_to_file(base64_data: str, file_name: str):
+    """base64字符串转文件"""
+    match = re.match(r'data:(?P<type>[^;]+);base64,(?P<data>.*)', base64_data)
+    if not match:
+        raise ValueError('Invalid Base64 data format')
 
-def save_finance_file(file_name: str, content: _FileContent):
-    """保存财务文件, 自动生成年月日目录"""
-    from django.conf import settings
+    file_type = match.group('type')  # 获取文件类型
+    file_data = match.group('data')   # 获取实际的 Base64 数据
 
-    prefix = getattr(settings, "FILE_FINANCE_PREFIX", "finance")
-    file_name = os.path.join(prefix, datetime.now().strftime("%Y%m%d/%H"), file_name)
-    return file_system_storage.save(file_name, content)
+    # 解码 Base64 数据
+    decoded_file_data = base64.b64decode(file_data)
+    file_name = "uploaded_file" if not file_name else file_name + "." + file_type.split('/')[-1]
+
+    # 创建 ContentFile
+    content_file = ContentFile(decoded_file_data, name=file_name)
+    return content_file, file_type, file_name
+
+def save_upload_base64_file(base64_data: str, file_name: str = None):
+    """保存上传的base64文件, 自动生成年月日目录"""
+    content_file, file_type, file_name = base64_to_file(base64_data, file_name)
+    return save_upload_file(file_name, content_file)
