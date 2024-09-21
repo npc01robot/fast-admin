@@ -4,7 +4,7 @@ type Result = {
   success: boolean;
   code: number;
   msg?: string;
-  data?: Array<any>;
+  data?: any;
 };
 
 type ResultTable = {
@@ -72,7 +72,7 @@ export const batchDeleteUser = (data?: object) => {
 };
 
 /** 系统管理-用户管理- 上传头像 */
-export const uploadAvatar = (data?: object, id: number) => {
+export const uploadAvatar = (data?: object, id?: number) => {
   return http.request<Result>("post", `/api/auth/user/${id}/upload_avatar/`, {
     data
   });

@@ -270,7 +270,6 @@ var Module = typeof Module != "undefined" ? Module : {};
         typeof TypedArray != "function" ||
         TypedArray === Function.prototype
       ) {
-        // eslint-disable-next-line no-shadow
         TypedArray = function TypedArray() {
           throw TypeError("Incorrect invocation");
         };
@@ -637,12 +636,12 @@ var Module = typeof Module != "undefined" ? Module : {};
             NativeArrayBuffer(1);
           }) ||
           !fails(function () {
-            new NativeArrayBuffer(-1); // eslint-disable-line no-new
+            new NativeArrayBuffer(-1);
           }) ||
           fails(function () {
-            new NativeArrayBuffer(); // eslint-disable-line no-new
-            new NativeArrayBuffer(1.5); // eslint-disable-line no-new
-            new NativeArrayBuffer(NaN); // eslint-disable-line no-new
+            new NativeArrayBuffer();
+            new NativeArrayBuffer(1.5);
+            new NativeArrayBuffer(NaN);
             return NativeArrayBuffer.name != ARRAY_BUFFER;
           })
         ) {
@@ -784,11 +783,11 @@ var Module = typeof Module != "undefined" ? Module : {};
           var index = toAbsoluteIndex(fromIndex, length);
           var value;
           // Array#includes uses SameValueZero equality algorithm
-          // eslint-disable-next-line no-self-compare
+
           if (IS_INCLUDES && el != el)
             while (length > index) {
               value = O[index++];
-              // eslint-disable-next-line no-self-compare
+
               if (value != value) return true;
               // Array#indexOf ignores holes, Array#includes - not
             }
@@ -844,15 +843,16 @@ var Module = typeof Module != "undefined" ? Module : {};
           var target = IS_MAP
             ? create($this, length)
             : IS_FILTER
-            ? create($this, 0)
-            : undefined;
+              ? create($this, 0)
+              : undefined;
           var value, result;
           for (; length > index; index++)
             if (NO_HOLES || index in self) {
               value = self[index];
               result = boundFunction(value, index, O);
               if (TYPE) {
-                if (IS_MAP) target[index] = result; // map
+                if (IS_MAP)
+                  target[index] = result; // map
                 else if (result)
                   switch (TYPE) {
                     case 3:
@@ -943,7 +943,6 @@ var Module = typeof Module != "undefined" ? Module : {};
         return (
           !!method &&
           fails(function () {
-            // eslint-disable-next-line no-useless-call,no-throw-literal
             method.call(
               null,
               argument ||
@@ -1076,7 +1075,7 @@ var Module = typeof Module != "undefined" ? Module : {};
         iteratorWithReturn[ITERATOR] = function () {
           return this;
         };
-        // eslint-disable-next-line no-throw-literal
+
         Array.from(iteratorWithReturn, function () {
           throw 2;
         });
@@ -1151,18 +1150,19 @@ var Module = typeof Module != "undefined" ? Module : {};
             return it === undefined
               ? "Undefined"
               : it === null
-              ? "Null"
-              : // @@toStringTag case
-              typeof (tag = tryGet((O = Object(it)), TO_STRING_TAG)) == "string"
-              ? tag
-              : // builtinTag case
-              CORRECT_ARGUMENTS
-              ? classofRaw(O)
-              : // ES3 arguments fallback
-              (result = classofRaw(O)) == "Object" &&
-                typeof O.callee == "function"
-              ? "Arguments"
-              : result;
+                ? "Null"
+                : // @@toStringTag case
+                  typeof (tag = tryGet((O = Object(it)), TO_STRING_TAG)) ==
+                    "string"
+                  ? tag
+                  : // builtinTag case
+                    CORRECT_ARGUMENTS
+                    ? classofRaw(O)
+                    : // ES3 arguments fallback
+                      (result = classofRaw(O)) == "Object" &&
+                        typeof O.callee == "function"
+                      ? "Arguments"
+                      : result;
           };
 
       /***/
@@ -1810,14 +1810,12 @@ var Module = typeof Module != "undefined" ? Module : {};
 
       // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
       module.exports =
-        // eslint-disable-next-line no-undef
         check(typeof globalThis == "object" && globalThis) ||
         check(typeof window == "object" && window) ||
         check(typeof self == "object" && self) ||
         check(
           typeof __webpack_require__.g == "object" && __webpack_require__.g
         ) ||
-        // eslint-disable-next-line no-new-func
         Function("return this")();
 
       /***/
@@ -1895,7 +1893,7 @@ var Module = typeof Module != "undefined" ? Module : {};
 
     /***/ 1179: /***/ function (module) {
       // IEEE754 conversions based on https://github.com/feross/ieee754
-      // eslint-disable-next-line no-shadow-restricted-names
+
       var Infinity = 1 / 0;
       var abs = Math.abs;
       var pow = Math.pow;
@@ -1913,9 +1911,8 @@ var Module = typeof Module != "undefined" ? Module : {};
         var index = 0;
         var exponent, mantissa, c;
         number = abs(number);
-        // eslint-disable-next-line no-self-compare
+
         if (number != number || number === Infinity) {
-          // eslint-disable-next-line no-self-compare
           mantissa = number != number ? 1 : 0;
           exponent = eMax;
         } else {
@@ -2016,7 +2013,7 @@ var Module = typeof Module != "undefined" ? Module : {};
       // fallback for non-array-like ES3 and non-enumerable old V8 strings
       module.exports = fails(function () {
         // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
-        // eslint-disable-next-line no-prototype-builtins
+
         return !Object("z").propertyIsEnumerable(0);
       })
         ? function (it) {
@@ -2200,10 +2197,10 @@ var Module = typeof Module != "undefined" ? Module : {};
         return value == POLYFILL
           ? true
           : value == NATIVE
-          ? false
-          : typeof detection == "function"
-          ? fails(detection)
-          : !!detection;
+            ? false
+            : typeof detection == "function"
+              ? fails(detection)
+              : !!detection;
       };
 
       var normalize = (isForced.normalize = function (string) {
@@ -2481,7 +2478,7 @@ var Module = typeof Module != "undefined" ? Module : {};
         !!Object.getOwnPropertySymbols &&
         !fails(function () {
           // Chrome 38 Symbol has incorrect toString conversion
-          // eslint-disable-next-line no-undef
+
           return !String(Symbol());
         });
 
@@ -2871,7 +2868,7 @@ var Module = typeof Module != "undefined" ? Module : {};
       // `Object.setPrototypeOf` method
       // https://tc39.github.io/ecma262/#sec-object.setprototypeof
       // Works with __proto__ only. Old v8 can't work with null proto objects.
-      /* eslint-disable no-proto */
+
       module.exports =
         Object.setPrototypeOf ||
         ("__proto__" in {}
@@ -3244,7 +3241,6 @@ var Module = typeof Module != "undefined" ? Module : {};
       var defer, channel, port;
 
       var run = function (id) {
-        // eslint-disable-next-line no-prototype-builtins
         if (queue.hasOwnProperty(id)) {
           var fn = queue[id];
           delete queue[id];
@@ -3274,7 +3270,6 @@ var Module = typeof Module != "undefined" ? Module : {};
           var i = 1;
           while (arguments.length > i) args.push(arguments[i++]);
           queue[++counter] = function () {
-            // eslint-disable-next-line no-new-func
             (typeof fn == "function" ? fn : Function(fn)).apply(
               undefined,
               args
@@ -3691,8 +3686,8 @@ var Module = typeof Module != "undefined" ? Module : {};
                 (value = round(value)) < 0
                   ? 0
                   : value > 0xff
-                  ? 0xff
-                  : value & 0xff;
+                    ? 0xff
+                    : value & 0xff;
             data.view[SETTER](index * BYTES + data.byteOffset, value, true);
           };
 
@@ -3709,86 +3704,80 @@ var Module = typeof Module != "undefined" ? Module : {};
           };
 
           if (!NATIVE_ARRAY_BUFFER_VIEWS) {
-            TypedArrayConstructor = wrapper(function (
-              that,
-              data,
-              offset,
-              $length
-            ) {
-              anInstance(that, TypedArrayConstructor, CONSTRUCTOR_NAME);
-              var index = 0;
-              var byteOffset = 0;
-              var buffer, byteLength, length;
-              if (!isObject(data)) {
-                length = toIndex(data);
-                byteLength = length * BYTES;
-                buffer = new ArrayBuffer(byteLength);
-              } else if (isArrayBuffer(data)) {
-                buffer = data;
-                byteOffset = toOffset(offset, BYTES);
-                var $len = data.byteLength;
-                if ($length === undefined) {
-                  if ($len % BYTES) throw RangeError(WRONG_LENGTH);
-                  byteLength = $len - byteOffset;
-                  if (byteLength < 0) throw RangeError(WRONG_LENGTH);
+            TypedArrayConstructor = wrapper(
+              function (that, data, offset, $length) {
+                anInstance(that, TypedArrayConstructor, CONSTRUCTOR_NAME);
+                var index = 0;
+                var byteOffset = 0;
+                var buffer, byteLength, length;
+                if (!isObject(data)) {
+                  length = toIndex(data);
+                  byteLength = length * BYTES;
+                  buffer = new ArrayBuffer(byteLength);
+                } else if (isArrayBuffer(data)) {
+                  buffer = data;
+                  byteOffset = toOffset(offset, BYTES);
+                  var $len = data.byteLength;
+                  if ($length === undefined) {
+                    if ($len % BYTES) throw RangeError(WRONG_LENGTH);
+                    byteLength = $len - byteOffset;
+                    if (byteLength < 0) throw RangeError(WRONG_LENGTH);
+                  } else {
+                    byteLength = toLength($length) * BYTES;
+                    if (byteLength + byteOffset > $len)
+                      throw RangeError(WRONG_LENGTH);
+                  }
+                  length = byteLength / BYTES;
+                } else if (isTypedArray(data)) {
+                  return fromList(TypedArrayConstructor, data);
                 } else {
-                  byteLength = toLength($length) * BYTES;
-                  if (byteLength + byteOffset > $len)
-                    throw RangeError(WRONG_LENGTH);
+                  return typedArrayFrom.call(TypedArrayConstructor, data);
                 }
-                length = byteLength / BYTES;
-              } else if (isTypedArray(data)) {
-                return fromList(TypedArrayConstructor, data);
-              } else {
-                return typedArrayFrom.call(TypedArrayConstructor, data);
+                setInternalState(that, {
+                  buffer: buffer,
+                  byteOffset: byteOffset,
+                  byteLength: byteLength,
+                  length: length,
+                  view: new DataView(buffer)
+                });
+                while (index < length) addElement(that, index++);
               }
-              setInternalState(that, {
-                buffer: buffer,
-                byteOffset: byteOffset,
-                byteLength: byteLength,
-                length: length,
-                view: new DataView(buffer)
-              });
-              while (index < length) addElement(that, index++);
-            });
+            );
 
             if (setPrototypeOf)
               setPrototypeOf(TypedArrayConstructor, TypedArray);
             TypedArrayConstructorPrototype = TypedArrayConstructor.prototype =
               create(TypedArrayPrototype);
           } else if (TYPED_ARRAYS_CONSTRUCTORS_REQUIRES_WRAPPERS) {
-            TypedArrayConstructor = wrapper(function (
-              dummy,
-              data,
-              typedArrayOffset,
-              $length
-            ) {
-              anInstance(dummy, TypedArrayConstructor, CONSTRUCTOR_NAME);
-              return inheritIfRequired(
-                (function () {
-                  if (!isObject(data))
-                    return new NativeTypedArrayConstructor(toIndex(data));
-                  if (isArrayBuffer(data))
-                    return $length !== undefined
-                      ? new NativeTypedArrayConstructor(
-                          data,
-                          toOffset(typedArrayOffset, BYTES),
-                          $length
-                        )
-                      : typedArrayOffset !== undefined
-                      ? new NativeTypedArrayConstructor(
-                          data,
-                          toOffset(typedArrayOffset, BYTES)
-                        )
-                      : new NativeTypedArrayConstructor(data);
-                  if (isTypedArray(data))
-                    return fromList(TypedArrayConstructor, data);
-                  return typedArrayFrom.call(TypedArrayConstructor, data);
-                })(),
-                dummy,
-                TypedArrayConstructor
-              );
-            });
+            TypedArrayConstructor = wrapper(
+              function (dummy, data, typedArrayOffset, $length) {
+                anInstance(dummy, TypedArrayConstructor, CONSTRUCTOR_NAME);
+                return inheritIfRequired(
+                  (function () {
+                    if (!isObject(data))
+                      return new NativeTypedArrayConstructor(toIndex(data));
+                    if (isArrayBuffer(data))
+                      return $length !== undefined
+                        ? new NativeTypedArrayConstructor(
+                            data,
+                            toOffset(typedArrayOffset, BYTES),
+                            $length
+                          )
+                        : typedArrayOffset !== undefined
+                          ? new NativeTypedArrayConstructor(
+                              data,
+                              toOffset(typedArrayOffset, BYTES)
+                            )
+                          : new NativeTypedArrayConstructor(data);
+                    if (isTypedArray(data))
+                      return fromList(TypedArrayConstructor, data);
+                    return typedArrayFrom.call(TypedArrayConstructor, data);
+                  })(),
+                  dummy,
+                  TypedArrayConstructor
+                );
+              }
+            );
 
             if (setPrototypeOf)
               setPrototypeOf(TypedArrayConstructor, TypedArray);
@@ -3867,7 +3856,6 @@ var Module = typeof Module != "undefined" ? Module : {};
       __unused_webpack_exports,
       __webpack_require__
     ) {
-      /* eslint-disable no-new */
       var global = __webpack_require__(7854);
       var fails = __webpack_require__(7293);
       var checkCorrectnessOfIteration = __webpack_require__(7072);
@@ -3968,11 +3956,7 @@ var Module = typeof Module != "undefined" ? Module : {};
       var NATIVE_SYMBOL = __webpack_require__(133);
 
       module.exports =
-        NATIVE_SYMBOL &&
-        // eslint-disable-next-line no-undef
-        !Symbol.sham &&
-        // eslint-disable-next-line no-undef
-        typeof Symbol.iterator == "symbol";
+        NATIVE_SYMBOL && !Symbol.sham && typeof Symbol.iterator == "symbol";
 
       /***/
     },
@@ -4825,9 +4809,9 @@ var Module = typeof Module != "undefined" ? Module : {};
             this instanceof SymbolWrapper
               ? new NativeSymbol(description)
               : // in Edge 13, String(Symbol(undefined)) === 'Symbol(undefined)'
-              description === undefined
-              ? NativeSymbol()
-              : NativeSymbol(description);
+                description === undefined
+                ? NativeSymbol()
+                : NativeSymbol(description);
           if (description === "") EmptyStringDescriptionStore[result] = true;
           return result;
         };
@@ -4954,7 +4938,6 @@ var Module = typeof Module != "undefined" ? Module : {};
       var exportTypedArrayMethod = ArrayBufferViewCore.exportTypedArrayMethod;
 
       var FORCED = fails(function () {
-        // eslint-disable-next-line no-undef
         new Int8Array(1).set({});
       });
 
@@ -5798,12 +5781,12 @@ var Module = typeof Module != "undefined" ? Module : {};
               "break" === record.type || "continue" === record.type
                 ? (this.next = record.arg)
                 : "return" === record.type
-                ? ((this.rval = this.arg = record.arg),
-                  (this.method = "return"),
-                  (this.next = "end"))
-                : "normal" === record.type &&
-                  afterLoc &&
-                  (this.next = afterLoc),
+                  ? ((this.rval = this.arg = record.arg),
+                    (this.method = "return"),
+                    (this.next = "end"))
+                  : "normal" === record.type &&
+                    afterLoc &&
+                    (this.next = afterLoc),
               ContinueSentinel
             );
           },
@@ -5913,17 +5896,17 @@ var Module = typeof Module != "undefined" ? Module : {};
               _defineProperty(target, key, source[key]);
             })
           : Object.getOwnPropertyDescriptors
-          ? Object.defineProperties(
-              target,
-              Object.getOwnPropertyDescriptors(source)
-            )
-          : ownKeys(Object(source)).forEach(function (key) {
-              Object.defineProperty(
+            ? Object.defineProperties(
                 target,
-                key,
-                Object.getOwnPropertyDescriptor(source, key)
-              );
-            });
+                Object.getOwnPropertyDescriptors(source)
+              )
+            : ownKeys(Object(source)).forEach(function (key) {
+                Object.defineProperty(
+                  target,
+                  key,
+                  Object.getOwnPropertyDescriptor(source, key)
+                );
+              });
       }
       return target;
     }
@@ -6176,32 +6159,31 @@ var Module = typeof Module != "undefined" ? Module : {};
     self.Module = {
       instantiateWasm: (function () {
         var _instantiateWasm = _asyncToGenerator(
-          /*#__PURE__*/ _regeneratorRuntime().mark(function _callee(
-            info,
-            receiveInstance
-          ) {
-            var url;
-            return _regeneratorRuntime().wrap(function _callee$(_context) {
-              while (1)
-                switch ((_context.prev = _context.next)) {
-                  case 0:
-                    _context.next = 2;
-                    return initPromise;
-                  case 2:
-                    url = _context.sent;
-                    fetch(url || "./capture.worker.wasm")
-                      .then(response => response.arrayBuffer())
-                      .then(bytes => WebAssembly.instantiate(bytes, info))
-                      .then(instance => receiveInstance(instance.instance));
-                  // WebAssembly.instantiate(bytes, info).then(result => {
-                  //     receiveInstance(result.instance);
-                  // });
-                  case 4:
-                  case "end":
-                    return _context.stop();
-                }
-            }, _callee);
-          })
+          /*#__PURE__*/ _regeneratorRuntime().mark(
+            function _callee(info, receiveInstance) {
+              var url;
+              return _regeneratorRuntime().wrap(function _callee$(_context) {
+                while (1)
+                  switch ((_context.prev = _context.next)) {
+                    case 0:
+                      _context.next = 2;
+                      return initPromise;
+                    case 2:
+                      url = _context.sent;
+                      fetch(url || "./capture.worker.wasm")
+                        .then(response => response.arrayBuffer())
+                        .then(bytes => WebAssembly.instantiate(bytes, info))
+                        .then(instance => receiveInstance(instance.instance));
+                    // WebAssembly.instantiate(bytes, info).then(result => {
+                    //     receiveInstance(result.instance);
+                    // });
+                    case 4:
+                    case "end":
+                      return _context.stop();
+                  }
+              }, _callee);
+            }
+          )
         );
         function instantiateWasm(_x, _x2) {
           return _instantiateWasm.apply(this, arguments);
@@ -10008,10 +9990,10 @@ function ___syscall_getdents64(fd, dirp, count) {
         type = FS.isChrdev(child.mode)
           ? 2 // DT_CHR, character device.
           : FS.isDir(child.mode)
-          ? 4 // DT_DIR, directory.
-          : FS.isLink(child.mode)
-          ? 10 // DT_LNK, symbolic link.
-          : 8; // DT_REG, regular file.
+            ? 4 // DT_DIR, directory.
+            : FS.isLink(child.mode)
+              ? 10 // DT_LNK, symbolic link.
+              : 8; // DT_REG, regular file.
       }
       (tempI64 = [
         id >>> 0,
@@ -10509,10 +10491,10 @@ function _fd_fdstat_get(fd, pbuf) {
       var type = stream.tty
         ? 2
         : FS.isDir(stream.mode)
-        ? 3
-        : FS.isLink(stream.mode)
-        ? 7
-        : 4;
+          ? 3
+          : FS.isLink(stream.mode)
+            ? 7
+            : 4;
     }
     HEAP8[pbuf >> 0] = type;
     HEAP16[(pbuf + 2) >> 1] = flags;

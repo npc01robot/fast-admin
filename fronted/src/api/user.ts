@@ -37,6 +37,7 @@ export type RefreshTokenResult = {
 };
 
 export type UserInfo = {
+  id: number;
   /** 头像 */
   avatar: string;
   /** 用户名 */

@@ -6,7 +6,7 @@ import { ReText } from "@/components/ReText";
 import Profile from "./components/Profile.vue";
 import Preferences from "./components/Preferences.vue";
 import SecurityLog from "./components/SecurityLog.vue";
-import {useGlobal, deviceDetection, storageLocal} from "@pureadmin/utils";
+import { useGlobal, deviceDetection, storageLocal } from "@pureadmin/utils";
 import AccountManagement from "./components/AccountManagement.vue";
 import { useDataThemeChange } from "@/layout/hooks/useDataThemeChange";
 import LaySidebarTopCollapse from "@/layout/components/lay-sidebar/components/SidebarTopCollapse.vue";
@@ -29,7 +29,7 @@ onBeforeMount(() => {
 });
 
 const userInfo = ref({
-  id: "",
+  id: 0,
   avatar: "",
   username: "",
   nickname: ""

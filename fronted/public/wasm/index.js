@@ -142,11 +142,11 @@
             var index = toAbsoluteIndex(fromIndex, length);
             var value;
             // Array#includes uses SameValueZero equality algorithm
-            // eslint-disable-next-line no-self-compare
+
             if (IS_INCLUDES && el != el)
               while (length > index) {
                 value = O[index++];
-                // eslint-disable-next-line no-self-compare
+
                 if (value != value) return true;
                 // Array#indexOf ignores holes, Array#includes - not
               }
@@ -202,15 +202,16 @@
             var target = IS_MAP
               ? create($this, length)
               : IS_FILTER
-              ? create($this, 0)
-              : undefined;
+                ? create($this, 0)
+                : undefined;
             var value, result;
             for (; length > index; index++)
               if (NO_HOLES || index in self) {
                 value = self[index];
                 result = boundFunction(value, index, O);
                 if (TYPE) {
-                  if (IS_MAP) target[index] = result; // map
+                  if (IS_MAP)
+                    target[index] = result; // map
                   else if (result)
                     switch (TYPE) {
                       case 3:
@@ -301,7 +302,6 @@
           return (
             !!method &&
             fails(function () {
-              // eslint-disable-next-line no-useless-call,no-throw-literal
               method.call(
                 null,
                 argument ||
@@ -435,7 +435,7 @@
           iteratorWithReturn[ITERATOR] = function () {
             return this;
           };
-          // eslint-disable-next-line no-throw-literal
+
           Array.from(iteratorWithReturn, function () {
             throw 2;
           });
@@ -510,19 +510,19 @@
               return it === undefined
                 ? "Undefined"
                 : it === null
-                ? "Null"
-                : // @@toStringTag case
-                typeof (tag = tryGet((O = Object(it)), TO_STRING_TAG)) ==
-                  "string"
-                ? tag
-                : // builtinTag case
-                CORRECT_ARGUMENTS
-                ? classofRaw(O)
-                : // ES3 arguments fallback
-                (result = classofRaw(O)) == "Object" &&
-                  typeof O.callee == "function"
-                ? "Arguments"
-                : result;
+                  ? "Null"
+                  : // @@toStringTag case
+                    typeof (tag = tryGet((O = Object(it)), TO_STRING_TAG)) ==
+                      "string"
+                    ? tag
+                    : // builtinTag case
+                      CORRECT_ARGUMENTS
+                      ? classofRaw(O)
+                      : // ES3 arguments fallback
+                        (result = classofRaw(O)) == "Object" &&
+                          typeof O.callee == "function"
+                        ? "Arguments"
+                        : result;
             };
 
         /***/
@@ -797,31 +797,30 @@
                     return this;
                   }
                 : KEY == "delete"
-                ? function (key) {
-                    return IS_WEAK && !isObject(key)
-                      ? false
-                      : nativeMethod.call(this, key === 0 ? 0 : key);
-                  }
-                : KEY == "get"
-                ? function get(key) {
-                    return IS_WEAK && !isObject(key)
-                      ? undefined
-                      : nativeMethod.call(this, key === 0 ? 0 : key);
-                  }
-                : KEY == "has"
-                ? function has(key) {
-                    return IS_WEAK && !isObject(key)
-                      ? false
-                      : nativeMethod.call(this, key === 0 ? 0 : key);
-                  }
-                : function set(key, value) {
-                    nativeMethod.call(this, key === 0 ? 0 : key, value);
-                    return this;
-                  }
+                  ? function (key) {
+                      return IS_WEAK && !isObject(key)
+                        ? false
+                        : nativeMethod.call(this, key === 0 ? 0 : key);
+                    }
+                  : KEY == "get"
+                    ? function get(key) {
+                        return IS_WEAK && !isObject(key)
+                          ? undefined
+                          : nativeMethod.call(this, key === 0 ? 0 : key);
+                      }
+                    : KEY == "has"
+                      ? function has(key) {
+                          return IS_WEAK && !isObject(key)
+                            ? false
+                            : nativeMethod.call(this, key === 0 ? 0 : key);
+                        }
+                      : function set(key, value) {
+                          nativeMethod.call(this, key === 0 ? 0 : key, value);
+                          return this;
+                        }
             );
           };
 
-          // eslint-disable-next-line max-len
           if (
             isForced(
               CONSTRUCTOR_NAME,
@@ -853,12 +852,12 @@
               instance.has(1);
             });
             // most early implementations doesn't supports iterables, most modern - not close it correctly
-            // eslint-disable-next-line no-new
-            var ACCEPT_ITERABLES = checkCorrectnessOfIteration(function (
-              iterable
-            ) {
-              new NativeConstructor(iterable);
-            });
+
+            var ACCEPT_ITERABLES = checkCorrectnessOfIteration(
+              function (iterable) {
+                new NativeConstructor(iterable);
+              }
+            );
             // for early implementations -0 and +0 not the same
             var BUGGY_ZERO =
               !IS_WEAK &&
@@ -1579,14 +1578,12 @@
 
         // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
         module.exports =
-          // eslint-disable-next-line no-undef
           check(typeof globalThis == "object" && globalThis) ||
           check(typeof window == "object" && window) ||
           check(typeof self == "object" && self) ||
           check(
             typeof __webpack_require__.g == "object" && __webpack_require__.g
           ) ||
-          // eslint-disable-next-line no-new-func
           Function("return this")();
 
         /***/
@@ -1675,7 +1672,7 @@
         // fallback for non-array-like ES3 and non-enumerable old V8 strings
         module.exports = fails(function () {
           // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
-          // eslint-disable-next-line no-prototype-builtins
+
           return !Object("z").propertyIsEnumerable(0);
         })
           ? function (it) {
@@ -1944,10 +1941,10 @@
           return value == POLYFILL
             ? true
             : value == NATIVE
-            ? false
-            : typeof detection == "function"
-            ? fails(detection)
-            : !!detection;
+              ? false
+              : typeof detection == "function"
+                ? fails(detection)
+                : !!detection;
         };
 
         var normalize = (isForced.normalize = function (string) {
@@ -2230,7 +2227,7 @@
           !!Object.getOwnPropertySymbols &&
           !fails(function () {
             // Chrome 38 Symbol has incorrect toString conversion
-            // eslint-disable-next-line no-undef
+
             return !String(Symbol());
           });
 
@@ -2626,7 +2623,7 @@
         // `Object.setPrototypeOf` method
         // https://tc39.github.io/ecma262/#sec-object.setprototypeof
         // Works with __proto__ only. Old v8 can't work with null proto objects.
-        /* eslint-disable no-proto */
+
         module.exports =
           Object.setPrototypeOf ||
           ("__proto__" in {}
@@ -3002,7 +2999,6 @@
         var defer, channel, port;
 
         var run = function (id) {
-          // eslint-disable-next-line no-prototype-builtins
           if (queue.hasOwnProperty(id)) {
             var fn = queue[id];
             delete queue[id];
@@ -3032,7 +3028,6 @@
             var i = 1;
             while (arguments.length > i) args.push(arguments[i++]);
             queue[++counter] = function () {
-              // eslint-disable-next-line no-new-func
               (typeof fn == "function" ? fn : Function(fn)).apply(
                 undefined,
                 args
@@ -3261,11 +3256,7 @@
         var NATIVE_SYMBOL = __webpack_require__(133);
 
         module.exports =
-          NATIVE_SYMBOL &&
-          // eslint-disable-next-line no-undef
-          !Symbol.sham &&
-          // eslint-disable-next-line no-undef
-          typeof Symbol.iterator == "symbol";
+          NATIVE_SYMBOL && !Symbol.sham && typeof Symbol.iterator == "symbol";
 
         /***/
       },
@@ -4193,9 +4184,9 @@
               this instanceof SymbolWrapper
                 ? new NativeSymbol(description)
                 : // in Edge 13, String(Symbol(undefined)) === 'Symbol(undefined)'
-                description === undefined
-                ? NativeSymbol()
-                : NativeSymbol(description);
+                  description === undefined
+                  ? NativeSymbol()
+                  : NativeSymbol(description);
             if (description === "") EmptyStringDescriptionStore[result] = true;
             return result;
           };
@@ -4901,12 +4892,12 @@
                 "break" === record.type || "continue" === record.type
                   ? (this.next = record.arg)
                   : "return" === record.type
-                  ? ((this.rval = this.arg = record.arg),
-                    (this.method = "return"),
-                    (this.next = "end"))
-                  : "normal" === record.type &&
-                    afterLoc &&
-                    (this.next = afterLoc),
+                    ? ((this.rval = this.arg = record.arg),
+                      (this.method = "return"),
+                      (this.next = "end"))
+                    : "normal" === record.type &&
+                      afterLoc &&
+                      (this.next = afterLoc),
                 ContinueSentinel
               );
             },
@@ -5057,17 +5048,17 @@
                 _defineProperty(target, key, source[key]);
               })
             : Object.getOwnPropertyDescriptors
-            ? Object.defineProperties(
-                target,
-                Object.getOwnPropertyDescriptors(source)
-              )
-            : ownKeys(Object(source)).forEach(function (key) {
-                Object.defineProperty(
+              ? Object.defineProperties(
                   target,
-                  key,
-                  Object.getOwnPropertyDescriptor(source, key)
-                );
-              });
+                  Object.getOwnPropertyDescriptors(source)
+                )
+              : ownKeys(Object(source)).forEach(function (key) {
+                  Object.defineProperty(
+                    target,
+                    key,
+                    Object.getOwnPropertyDescriptor(source, key)
+                  );
+                });
         }
         return target;
       }
@@ -5094,51 +5085,50 @@
       }
       function _initWorker() {
         _initWorker = _asyncToGenerator(
-          /*#__PURE__*/ _regeneratorRuntime().mark(function _callee(
-            url,
-            wasmPath
-          ) {
-            var promise;
-            return _regeneratorRuntime().wrap(function _callee$(_context) {
-              while (1)
-                switch ((_context.prev = _context.next)) {
-                  case 0:
-                    if (!captureWorker) {
-                      _context.next = 2;
-                      break;
-                    }
-                    return _context.abrupt("return", captureWorker);
-                  case 2:
-                    // captureWorker = new Worker(new URL('./capture.worker.js', import.meta.url));
-                    captureWorker = new Worker(url);
-                    workerPost({
-                      type: "initPath",
-                      info: wasmPath.toString()
-                    });
-                    promise = new Promise(resolve => {
-                      captureWorker &&
-                        captureWorker.addEventListener("message", e => {
-                          var _e$data;
-                          if (
-                            (e === null || e === void 0
-                              ? void 0
-                              : (_e$data = e.data) === null ||
-                                _e$data === void 0
-                              ? void 0
-                              : _e$data.type) === "init"
-                          ) {
-                            // wasm初始化完毕
-                            resolve(captureWorker);
-                          }
-                        });
-                    });
-                    return _context.abrupt("return", promise);
-                  case 6:
-                  case "end":
-                    return _context.stop();
-                }
-            }, _callee);
-          })
+          /*#__PURE__*/ _regeneratorRuntime().mark(
+            function _callee(url, wasmPath) {
+              var promise;
+              return _regeneratorRuntime().wrap(function _callee$(_context) {
+                while (1)
+                  switch ((_context.prev = _context.next)) {
+                    case 0:
+                      if (!captureWorker) {
+                        _context.next = 2;
+                        break;
+                      }
+                      return _context.abrupt("return", captureWorker);
+                    case 2:
+                      // captureWorker = new Worker(new URL('./capture.worker.js', import.meta.url));
+                      captureWorker = new Worker(url);
+                      workerPost({
+                        type: "initPath",
+                        info: wasmPath.toString()
+                      });
+                      promise = new Promise(resolve => {
+                        captureWorker &&
+                          captureWorker.addEventListener("message", e => {
+                            var _e$data;
+                            if (
+                              (e === null || e === void 0
+                                ? void 0
+                                : (_e$data = e.data) === null ||
+                                    _e$data === void 0
+                                  ? void 0
+                                  : _e$data.type) === "init"
+                            ) {
+                              // wasm初始化完毕
+                              resolve(captureWorker);
+                            }
+                          });
+                      });
+                      return _context.abrupt("return", promise);
+                    case 6:
+                    case "end":
+                      return _context.stop();
+                  }
+              }, _callee);
+            }
+          )
         );
         return _initWorker.apply(this, arguments);
       }
@@ -5218,71 +5208,68 @@
       }
       function _getUrl() {
         _getUrl = _asyncToGenerator(
-          /*#__PURE__*/ _regeneratorRuntime().mark(function _callee2(
-            width,
-            height,
-            imageDataBuffer,
-            angle
-          ) {
-            var canvasWith, canvasHeight, imageData, imgData;
-            return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-              while (1)
-                switch ((_context2.prev = _context2.next)) {
-                  case 0:
-                    canvasWith = width;
-                    canvasHeight = height;
-                    imageData = new ImageData(imageDataBuffer, width, height);
-                    imgData = null;
-                    _context2.t0 = angle / 90;
-                    _context2.next =
-                      _context2.t0 === 1
-                        ? 7
-                        : _context2.t0 === 2
-                        ? 11
-                        : _context2.t0 === 3
-                        ? 14
-                        : 18;
-                    break;
-                  case 7:
-                    imgData = rotateImage(imageData, "r");
-                    canvasWith = height;
-                    canvasHeight = width;
-                    return _context2.abrupt("break", 20);
-                  case 11:
-                    imgData = rotateImage(imageData, "r");
-                    imgData = rotateImage(imageData, "r");
-                    return _context2.abrupt("break", 20);
-                  case 14:
-                    imgData = rotateImage(imageData, "l");
-                    canvasWith = height;
-                    canvasHeight = width;
-                    return _context2.abrupt("break", 20);
-                  case 18:
-                    imgData = imageData;
-                    return _context2.abrupt("break", 20);
-                  case 20:
-                    canvas.width = canvasWith;
-                    canvas.height = canvasHeight;
-                    ctx.putImageData(
-                      imgData,
-                      0,
-                      0,
-                      0,
-                      0,
-                      canvasWith,
-                      canvasHeight
-                    );
-                    // const blob = new Blob([imageDataBuffer.buffer], {type: 'image/png'} /* (1) */);
-                    return _context2.abrupt("return", {
-                      url: canvas.toDataURL("image/jpeg")
-                      // blob: blob,
-                    });
-                  case 24:
-                  case "end":
-                    return _context2.stop();
-                }
-            }, _callee2);
-          })
+          /*#__PURE__*/ _regeneratorRuntime().mark(
+            function _callee2(width, height, imageDataBuffer, angle) {
+              var canvasWith, canvasHeight, imageData, imgData;
+              return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+                while (1)
+                  switch ((_context2.prev = _context2.next)) {
+                    case 0:
+                      canvasWith = width;
+                      canvasHeight = height;
+                      imageData = new ImageData(imageDataBuffer, width, height);
+                      imgData = null;
+                      _context2.t0 = angle / 90;
+                      _context2.next =
+                        _context2.t0 === 1
+                          ? 7
+                          : _context2.t0 === 2
+                            ? 11
+                            : _context2.t0 === 3
+                              ? 14
+                              : 18;
+                      break;
+                    case 7:
+                      imgData = rotateImage(imageData, "r");
+                      canvasWith = height;
+                      canvasHeight = width;
+                      return _context2.abrupt("break", 20);
+                    case 11:
+                      imgData = rotateImage(imageData, "r");
+                      imgData = rotateImage(imageData, "r");
+                      return _context2.abrupt("break", 20);
+                    case 14:
+                      imgData = rotateImage(imageData, "l");
+                      canvasWith = height;
+                      canvasHeight = width;
+                      return _context2.abrupt("break", 20);
+                    case 18:
+                      imgData = imageData;
+                      return _context2.abrupt("break", 20);
+                    case 20:
+                      canvas.width = canvasWith;
+                      canvas.height = canvasHeight;
+                      ctx.putImageData(
+                        imgData,
+                        0,
+                        0,
+                        0,
+                        0,
+                        canvasWith,
+                        canvasHeight
+                      );
+                      // const blob = new Blob([imageDataBuffer.buffer], {type: 'image/png'} /* (1) */);
+                      return _context2.abrupt("return", {
+                        url: canvas.toDataURL("image/jpeg")
+                        // blob: blob,
+                      });
+                    case 24:
+                    case "end":
+                      return _context2.stop();
+                  }
+              }, _callee2);
+            }
+          )
         );
         return _getUrl.apply(this, arguments);
       }
@@ -5357,20 +5344,20 @@
                                           e === null || e === void 0
                                             ? void 0
                                             : (_e$data2 = e.data) === null ||
-                                              _e$data2 === void 0
-                                            ? void 0
-                                            : _e$data2.type;
+                                                _e$data2 === void 0
+                                              ? void 0
+                                              : _e$data2.type;
                                         _context3.next =
                                           _context3.t0 ===
                                           Events.receiveImageOnchange
                                             ? 3
                                             : _context3.t0 ===
-                                              Events.receiveImageOnSuccess
-                                            ? 15
-                                            : _context3.t0 ===
-                                              Events.receiveError
-                                            ? 21
-                                            : 26;
+                                                Events.receiveImageOnSuccess
+                                              ? 15
+                                              : _context3.t0 ===
+                                                  Events.receiveError
+                                                ? 21
+                                                : 26;
                                         break;
                                       case 3:
                                         (_ref3 = e.data || {}),

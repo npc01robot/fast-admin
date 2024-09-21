@@ -21,6 +21,7 @@ const isShow = ref(false);
 const userInfoFormRef = ref<FormInstance>();
 
 const userInfos = reactive({
+  id: 0,
   avatar: "",
   nickname: "",
   email: "",

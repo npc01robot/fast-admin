@@ -26,7 +26,9 @@ import {
   updateUser,
   deleteUser,
   changePassword,
-  updateUserRole, batchDeleteUser, uploadAvatar
+  updateUserRole,
+  batchDeleteUser,
+  uploadAvatar
 } from "@/api/system";
 import {
   ElForm,

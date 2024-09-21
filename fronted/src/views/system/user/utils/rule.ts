@@ -1,14 +1,13 @@
 import { reactive } from "vue";
 import type { FormRules } from "element-plus";
 import { isPhone, isEmail } from "@pureadmin/utils";
-import {$t, transformI18n} from "@/plugins/i18n";
-import {REGEXP_PWD} from "@/views/login/utils/rule";
+import { $t, transformI18n } from "@/plugins/i18n";
+import { REGEXP_PWD } from "@/views/login/utils/rule";
 
 /** 自定义表单规则校验 */
 export const formRules = reactive(<FormRules>{
   nickname: [{ required: true, message: "用户昵称为必填项", trigger: "blur" }],
   username: [{ required: true, message: "用户名称为必填项", trigger: "blur" }],
-  password: [{ required: true, message: "用户密码为必填项", trigger: "blur" }],
   phone: [
     {
       validator: (rule, value, callback) => {

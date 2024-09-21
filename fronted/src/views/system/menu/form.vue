@@ -19,6 +19,7 @@ import {
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
+    id: 0,
     menuType: 0,
     higherMenuOptions: [],
     parent: 0,
