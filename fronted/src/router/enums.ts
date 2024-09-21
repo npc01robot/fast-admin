@@ -24,7 +24,8 @@ const home = 0, // 平台规定只有 home 路由的 rank 才能为 0 ，所以�
   ppt = 21,
   mind = 22,
   guide = 23,
-  menuoverflow = 24;
+  menuoverflow = 24,
+  aggrid = 25;
 
 export {
   home,
@@ -51,5 +52,6 @@ export {
   ppt,
   mind,
   guide,
-  menuoverflow
+  menuoverflow,
+  aggrid
 };

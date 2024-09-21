@@ -62,6 +62,7 @@
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "@zxcvbn-ts/core": "^3.0.4",
+    "ag-grid-vue3": "^32.2.0",
     "animate.css": "^4.1.1",
     "axios": "^1.7.3",
     "china-area-data": "^5.0.1",
