@@ -17,6 +17,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+
+MODULE_DICT = {
+    'login': '登录',
+   'sign': '注册',
+    'dept': '部门管理',
+    'role': '角色管理',
+    'user': '用户管理',
+   'menu': '菜单管理',
+    'grid': '表格管理',
+}
+
+
 class APIUrls:
     urlpatterns = [
         path('grid/', include('grid.urls')),

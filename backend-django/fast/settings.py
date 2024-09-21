@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 
     "grid"
 ]
+AUTH_USER_MODEL = "auth_ext.AuthExtUser"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -56,6 +57,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "rest_framework_ext.log_middleware.LogMiddleware",
 ]
 
 ROOT_URLCONF = "fast.urls"
@@ -92,7 +94,6 @@ DATABASES = {
         "PORT": "3306",
     }
 }
-AUTH_USER_MODEL = "auth_ext.AuthExtUser"
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework_ext.pagination.PageNumberPaginationExt",

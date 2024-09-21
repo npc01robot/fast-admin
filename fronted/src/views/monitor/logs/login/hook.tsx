@@ -10,7 +10,8 @@ export function useRole(tableRef: Ref) {
   const form = reactive({
     username: "",
     status: "",
-    loginTime: ""
+    loginTime: "",
+    behavior: "登录"
   });
   const dataList = ref([]);
   const loading = ref(true);

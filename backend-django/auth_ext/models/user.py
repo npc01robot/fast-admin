@@ -52,35 +52,6 @@ class AuthExtUser(AbstractUser, models.Model):
             self.save()
 
 
-class LoginLog(models.Model):
-    user = models.ForeignKey(AuthExtUser, on_delete=models.CASCADE)
-    ip = models.CharField(max_length=20, verbose_name="IP地址")
-    address = models.CharField(max_length=100, verbose_name="地址")
-    system = models.CharField(max_length=50, verbose_name="系统")
-    browser = models.CharField(max_length=50, verbose_name="浏览器")
-    summary = models.CharField(max_length=200, verbose_name="描述")
-    create_time = models.DateTimeField(auto_now_add=True, verbose_name="登录时间")
-    operating_time = models.IntegerField(default=0, verbose_name="使用时长(分钟)")
-
-    class Meta(object):
-        db_table = "login_log"
-        verbose_name = "登录日志"
-        managed = True
-
-    @classmethod
-    def op_log(cls, request, summary):
-        if request.META.has_key("HTTP_X_FORWARDED_FOR"):
-            ip = request.META["HTTP_X_FORWARDED_FOR"]
-        else:
-            ip = request.META["REMOTE_ADDR"]
-        address = request.META.get("HTTP_X_REAL_IP", "")
-        system = request.META.get("HTTP_USER_AGENT", "")
-        browser = request.META.get("HTTP_USER_AGENT", "")
-        cls.objects.create(
-            ip=ip, address=address, system=system, browser=browser, summary=summary
-        )
-
-
 class UserRoles(models.Model):
     user = models.ForeignKey(AuthExtUser, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
