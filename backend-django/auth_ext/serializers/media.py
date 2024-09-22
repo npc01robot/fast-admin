@@ -6,4 +6,4 @@ from auth_ext.models.media import FileMedia
 class MediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = FileMedia
-        fields = '__all__'
+        fields = "__all__"

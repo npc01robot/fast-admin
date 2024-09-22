@@ -162,8 +162,10 @@ class AuthUserInfoSerializer(serializers.Serializer):
     depart_id = serializers.IntegerField(write_only=True, required=False)
     password = serializers.CharField(write_only=True, required=False)
     status = serializers.BooleanField()
-    description = serializers.CharField(required=False, allow_null=True,allow_blank=True)
-    remark = serializers.CharField(required=False, allow_null=True,allow_blank=True)
+    description = serializers.CharField(
+        required=False, allow_null=True, allow_blank=True
+    )
+    remark = serializers.CharField(required=False, allow_null=True, allow_blank=True)
 
     def get_dept(self, obj):
         if obj.dept:
@@ -174,6 +176,7 @@ class AuthUserInfoSerializer(serializers.Serializer):
         if obj.avatar:
             return BASE_URL + file_system_storage.url(obj.avatar)
         return ""
+
     def validate(self, attrs):
         depart_id = attrs.pop("depart_id", None)
         if depart_id:

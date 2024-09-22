@@ -44,8 +44,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "auth_ext",
-
-    "grid"
+    "grid",
 ]
 AUTH_USER_MODEL = "auth_ext.AuthExtUser"
 
@@ -182,6 +181,6 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"
 BASE_URL = "http://localhost:8090/"

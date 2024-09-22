@@ -10,7 +10,6 @@ class Grid(models.Model):
     is_deleted = models.BooleanField(default=False)
 
     class Meta:
-        db_table = 'grid'
-        verbose_name='Grid'
+        db_table = "grid"
+        verbose_name = "Grid"
         managed = True
-

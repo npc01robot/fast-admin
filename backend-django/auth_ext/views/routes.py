@@ -70,103 +70,105 @@ class AsyncRoute(generics.ListAPIView):
             print(f"Error occurred: {e}")
             data = []
         if "admin" in role_list:
-            data.extend([
-                {
-                    "path": "/system",
-                    "meta": {
-                        "icon": "ri:settings-3-line",
-                        "title": "menus.pureSysManagement",
-                        "rank": 90,
+            data.extend(
+                [
+                    {
+                        "path": "/system",
+                        "meta": {
+                            "icon": "ri:settings-3-line",
+                            "title": "menus.pureSysManagement",
+                            "rank": 90,
+                        },
+                        "children": [
+                            {
+                                "path": "/system/user/index",
+                                "name": "SystemUser",
+                                "meta": {
+                                    "icon": "ri:admin-line",
+                                    "title": "menus.pureUser",
+                                    "roles": ["admin"],
+                                },
+                            },
+                            {
+                                "path": "/system/role/index",
+                                "name": "SystemRole",
+                                "meta": {
+                                    "icon": "ri:admin-fill",
+                                    "title": "menus.pureRole",
+                                    "roles": ["admin"],
+                                },
+                            },
+                            {
+                                "path": "/system/menu/index",
+                                "name": "SystemMenu",
+                                "meta": {
+                                    "icon": "ep:menu",
+                                    "title": "menus.pureSystemMenu",
+                                    "roles": ["admin"],
+                                },
+                            },
+                            {
+                                "path": "/system/dept/index",
+                                "name": "SystemDept",
+                                "meta": {
+                                    "icon": "ri:git-branch-line",
+                                    "title": "menus.pureDept",
+                                    "roles": ["admin"],
+                                },
+                            },
+                        ],
                     },
-                    "children": [
-                        {
-                            "path": "/system/user/index",
-                            "name": "SystemUser",
-                            "meta": {
-                                "icon": "ri:admin-line",
-                                "title": "menus.pureUser",
-                                "roles": ["admin"],
-                            },
+                    {
+                        "path": "/monitor",
+                        "meta": {
+                            "icon": "ep:monitor",
+                            "title": "menus.pureSysMonitor",
+                            "rank": 91,
                         },
-                        {
-                            "path": "/system/role/index",
-                            "name": "SystemRole",
-                            "meta": {
-                                "icon": "ri:admin-fill",
-                                "title": "menus.pureRole",
-                                "roles": ["admin"],
+                        "children": [
+                            {
+                                "path": "/monitor/online-user",
+                                "component": "monitor/online/index",
+                                "name": "OnlineUser",
+                                "meta": {
+                                    "icon": "ri:user-voice-line",
+                                    "title": "menus.pureOnlineUser",
+                                    "roles": ["admin"],
+                                },
                             },
-                        },
-                        {
-                            "path": "/system/menu/index",
-                            "name": "SystemMenu",
-                            "meta": {
-                                "icon": "ep:menu",
-                                "title": "menus.pureSystemMenu",
-                                "roles": ["admin"],
+                            {
+                                "path": "/monitor/login-logs",
+                                "component": "monitor/logs/login/index",
+                                "name": "LoginLog",
+                                "meta": {
+                                    "icon": "ri:window-line",
+                                    "title": "menus.pureLoginLog",
+                                    "roles": ["admin"],
+                                },
                             },
-                        },
-                        {
-                            "path": "/system/dept/index",
-                            "name": "SystemDept",
-                            "meta": {
-                                "icon": "ri:git-branch-line",
-                                "title": "menus.pureDept",
-                                "roles": ["admin"],
+                            {
+                                "path": "/monitor/operation-logs",
+                                "component": "monitor/logs/operation/index",
+                                "name": "OperationLog",
+                                "meta": {
+                                    "icon": "ri:history-fill",
+                                    "title": "menus.pureOperationLog",
+                                    "roles": ["admin"],
+                                },
                             },
-                        },
-                    ],
-                },
-                {
-                    "path": "/monitor",
-                    "meta": {
-                        "icon": "ep:monitor",
-                        "title": "menus.pureSysMonitor",
-                        "rank": 91
+                            {
+                                "path": "/monitor/system-logs",
+                                "component": "monitor/logs/system/index",
+                                "name": "SystemLog",
+                                "meta": {
+                                    "icon": "ri:file-search-line",
+                                    "title": "menus.pureSystemLog",
+                                    "roles": ["admin"],
+                                },
+                            },
+                        ],
                     },
-                    "children": [
-                        {
-                            "path": "/monitor/online-user",
-                            "component": "monitor/online/index",
-                            "name": "OnlineUser",
-                            "meta": {
-                                "icon": "ri:user-voice-line",
-                                "title": "menus.pureOnlineUser",
-                                "roles": ["admin"]
-                            }
-                        },
-                        {
-                            "path": "/monitor/login-logs",
-                            "component": "monitor/logs/login/index",
-                            "name": "LoginLog",
-                            "meta": {
-                                "icon": "ri:window-line",
-                                "title": "menus.pureLoginLog",
-                                "roles": ["admin"]
-                            }
-                        },
-                        {
-                            "path": "/monitor/operation-logs",
-                            "component": "monitor/logs/operation/index",
-                            "name": "OperationLog",
-                            "meta": {
-                                "icon": "ri:history-fill",
-                                "title": "menus.pureOperationLog",
-                                "roles": ["admin"]
-                            }
-                        },
-                        {
-                            "path": "/monitor/system-logs",
-                            "component": "monitor/logs/system/index",
-                            "name": "SystemLog",
-                            "meta": {
-                                "icon": "ri:file-search-line",
-                                "title": "menus.pureSystemLog",
-                                "roles": ["admin"]
-                            }
-                        }
-                    ]
-                }]
+                ]
             )
         return Response(data)
 

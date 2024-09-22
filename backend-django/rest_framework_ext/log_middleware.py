@@ -14,9 +14,9 @@ class LogMiddleware(MiddlewareMixin):
         # 将 request.body 缓存下来，供后续处理中使用
         if request.body:
             try:
-                request.body_data = json.loads(request.body.decode('utf-8'))
+                request.body_data = json.loads(request.body.decode("utf-8"))
             except json.JSONDecodeError:
-                request.body_data = request.body.decode('utf-8')
+                request.body_data = request.body.decode("utf-8")
         else:
             request.body_data = None
         start_time = time.time()
@@ -30,12 +30,14 @@ class LogMiddleware(MiddlewareMixin):
         user = request.user if request.user != AnonymousUser() else None
         path = request.get_full_path()
         method = request.method
-        ip = request.META.get('REMOTE_ADDR', "未知")
-        system = request.META.get('OS', "未知")
-        browser = request.META.get('HTTP_USER_AGENT', "未知")
+        ip = request.META.get("REMOTE_ADDR", "未知")
+        system = request.META.get("OS", "未知")
+        browser = request.META.get("HTTP_USER_AGENT", "未知")
         body_data = request.body_data
         # 确定模块
-        module = next((value for key, value in MODULE_DICT.items() if key in path.split("/")), "")
+        module = next(
+            (value for key, value in MODULE_DICT.items() if key in path.split("/")), ""
+        )
 
         if module:
             behavior = self.get_behavior(method, body_data, module)
@@ -55,22 +57,22 @@ class LogMiddleware(MiddlewareMixin):
                 behavior=behavior,
                 summary=f"{behavior}{module}",
                 body=body,
-                takes_time=takes_time
+                takes_time=takes_time,
             )
         return response
 
     def get_behavior(self, method, body_data, module):
-        if method == 'GET':
-            return '查看'
-        elif method == 'POST':
+        if method == "GET":
+            return "查看"
+        elif method == "POST":
             if module == "登录":
-                return '登录'
+                return "登录"
             return body_data.get("behavior", "新增")
-        elif method == 'PUT':
-            return '修改'
-        elif method == 'DELETE':
-            return '删除'
-        return '操作'
+        elif method == "PUT":
+            return "修改"
+        elif method == "DELETE":
+            return "删除"
+        return "操作"
 
     def construct_log_body(self, method, path, ip, request, response):
         if method in ["POST", "PUT", "DELETE"]:
