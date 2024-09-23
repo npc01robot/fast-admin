@@ -77,7 +77,7 @@ class AsyncRoute(generics.ListAPIView):
                         "meta": {
                             "icon": "ri:settings-3-line",
                             "title": "menus.pureSysManagement",
-                            "rank": 90,
+                            "rank": 1,
                         },
                         "children": [
                             {
@@ -123,7 +123,7 @@ class AsyncRoute(generics.ListAPIView):
                         "meta": {
                             "icon": "ep:monitor",
                             "title": "menus.pureSysMonitor",
-                            "rank": 91,
+                            "rank": 2,
                         },
                         "children": [
                             {

@@ -33,7 +33,7 @@ const columns = [
   },
   {
     label: "请求时间",
-    prop: "requestTime"
+    prop: "action_time"
   },
   {
     label: "请求方法",

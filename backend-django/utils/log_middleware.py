@@ -4,7 +4,6 @@ import time
 from django.contrib.auth.models import AnonymousUser
 from django.utils.deprecation import MiddlewareMixin
 
-from auth_ext.models import AuthExtUser
 from auth_ext.models.log import AuthLog
 from fast.urls import MODULE_DICT
 
@@ -41,7 +40,6 @@ class LogMiddleware(MiddlewareMixin):
 
         if module:
             behavior = self.get_behavior(method, body_data, module)
-            body = self.construct_log_body(method, path, ip, request, response)
 
             # Create AuthLog entry
             AuthLog.objects.create(
@@ -56,8 +54,15 @@ class LogMiddleware(MiddlewareMixin):
                 status=1 if response.status_code == 200 and user else 0,
                 behavior=behavior,
                 summary=f"{behavior}{module}",
-                body=body,
                 takes_time=takes_time,
+                request_body=body_data if body_data else {},
+                response_body=(
+                    dict(json.loads(response.content.decode("utf-8")))
+                    if response.content
+                    else {}
+                ),
+                request_headers=dict(request.headers),
+                response_headers=dict(response.headers),
             )
         return response
 
@@ -73,8 +78,3 @@ class LogMiddleware(MiddlewareMixin):
         elif method == "DELETE":
             return "删除"
         return "操作"
-
-    def construct_log_body(self, method, path, ip, request, response):
-        if method in ["POST", "PUT", "DELETE"]:
-            return f"{path}-{method}-{ip}-{request.body.decode('utf-8')} response:{response.content.decode('utf-8')}"
-        return f"{path}-{method}-{ip}\n"

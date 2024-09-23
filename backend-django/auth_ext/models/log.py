@@ -19,8 +19,11 @@ class AuthLog(models.Model):
     behavior = models.CharField(max_length=200)
     action_time = models.DateTimeField(auto_now_add=True)
     summary = models.CharField(max_length=1000)
-    body = models.TextField(max_length=2000)
     takes_time = models.IntegerField(default=0)
+    response_headers = models.JSONField(default=dict)
+    request_headers = models.JSONField(default=dict)
+    response_body = models.JSONField(default=dict)
+    request_body = models.JSONField(default=dict)
 
     class Meta:
         db_table = "auth_ext_log"

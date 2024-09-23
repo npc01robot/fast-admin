@@ -189,14 +189,14 @@ export function useRole(tableRef: Ref) {
   }
 
   function onDetail(row) {
-    getSystemLogsDetail({ id: row.id }).then(res => {
+    getSystemLogsDetail(row.id).then(res => {
       addDialog({
         title: "系统日志详情",
         fullscreen: true,
         hideFooter: true,
         contentRenderer: () => Detail,
         props: {
-          data: [res]
+          data: [res.data]
         }
       });
     });

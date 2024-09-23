@@ -56,7 +56,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "rest_framework_ext.log_middleware.LogMiddleware",
+    "utils.log_middleware.LogMiddleware",
 ]
 
 ROOT_URLCONF = "fast.urls"
