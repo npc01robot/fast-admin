@@ -48,13 +48,17 @@ const props = {
   tableKey: {
     type: [String, Number] as PropType<string | number>,
     default: "0"
+  },
+  showColumn: {
+    type: Boolean,
+    default: true
   }
 };
 
 export default defineComponent({
   name: "PureTableBar",
   props,
-  emits: ["refresh"],
+  emits: ["refresh", "showColumn"],
   setup(props, { emit, slots, attrs }) {
     const size = ref("default");
     const loading = ref(false);
@@ -63,6 +67,7 @@ export default defineComponent({
     const isIndeterminate = ref(false);
     const instance = getCurrentInstance()!;
     const isExpandAll = ref(props.isExpandAll);
+    const showColumn = ref(props.showColumn);
     const filterColumns = cloneDeep(props?.columns).filter(column =>
       isBoolean(column?.hide)
         ? !column.hide
@@ -110,6 +115,10 @@ export default defineComponent({
       loading.value = true;
       emit("refresh");
       delay(500).then(() => (loading.value = false));
+    }
+
+    function onShowColumn() {
+      emit("showColumn");
     }
 
     function onExpand() {
@@ -303,75 +312,87 @@ export default defineComponent({
               </el-dropdown>
               <el-divider direction="vertical" />
 
-              <el-popover
-                v-slots={reference}
-                placement="bottom-start"
-                popper-style={{ padding: 0 }}
-                width="200"
-                trigger="click"
-              >
-                <div class={[topClass.value]}>
-                  <el-checkbox
-                    class="!-mr-1"
-                    label="列展示"
-                    v-model={checkAll.value}
-                    indeterminate={isIndeterminate.value}
-                    onChange={value => handleCheckAllChange(value)}
-                  />
-                  <el-button type="primary" link onClick={() => onReset()}>
-                    重置
-                  </el-button>
-                </div>
+              <div v-show={showColumn.value}>
+                <el-popover
+                  v-slots={reference}
+                  placement="bottom-start"
+                  popper-style={{ padding: 0 }}
+                  width="200"
+                  trigger="click"
+                >
+                  <div class={[topClass.value]}>
+                    <el-checkbox
+                      className="!-mr-1"
+                      label="列展示"
+                      v-model={checkAll.value}
+                      indeterminate={isIndeterminate.value}
+                      onChange={value => handleCheckAllChange(value)}
+                    />
+                    <el-button type="primary" link onClick={() => onReset()}>
+                      重置
+                    </el-button>
+                  </div>
 
-                <div class="pt-[6px] pl-[11px]">
-                  <el-scrollbar max-height="36vh">
-                    <el-checkbox-group
-                      ref={`GroupRef${unref(props.tableKey)}`}
-                      modelValue={checkedColumns.value}
-                      onChange={value => handleCheckedColumnsChange(value)}
-                    >
-                      <el-space
-                        direction="vertical"
-                        alignment="flex-start"
-                        size={0}
+                  <div class="pt-[6px] pl-[11px]">
+                    <el-scrollbar max-height="36vh">
+                      <el-checkbox-group
+                        ref={`GroupRef${unref(props.tableKey)}`}
+                        modelValue={checkedColumns.value}
+                        onChange={value => handleCheckedColumnsChange(value)}
                       >
-                        {checkColumnList.map((item, index) => {
-                          return (
-                            <div class="flex items-center">
-                              <DragIcon
-                                class={[
-                                  "drag-btn w-[16px] mr-2",
-                                  isFixedColumn(item)
-                                    ? "!cursor-no-drop"
-                                    : "!cursor-grab"
-                                ]}
-                                onMouseenter={(event: {
-                                  preventDefault: () => void;
-                                }) => rowDrop(event)}
-                              />
-                              <el-checkbox
-                                key={index}
-                                label={item}
-                                value={item}
-                                onChange={value =>
-                                  handleCheckColumnListChange(value, item)
-                                }
-                              >
-                                <span
-                                  title={transformI18n(item)}
-                                  class="inline-block w-[120px] truncate hover:text-text_color_primary"
+                        <el-space
+                          direction="vertical"
+                          alignment="flex-start"
+                          size={0}
+                        >
+                          {checkColumnList.map((item, index) => {
+                            return (
+                              <div class="flex items-center">
+                                <DragIcon
+                                  class={[
+                                    "drag-btn w-[16px] mr-2",
+                                    isFixedColumn(item)
+                                      ? "!cursor-no-drop"
+                                      : "!cursor-grab"
+                                  ]}
+                                  onMouseenter={(event: {
+                                    preventDefault: () => void;
+                                  }) => rowDrop(event)}
+                                />
+                                <el-checkbox
+                                  key={index}
+                                  label={item}
+                                  value={item}
+                                  onChange={value =>
+                                    handleCheckColumnListChange(value, item)
+                                  }
                                 >
-                                  {transformI18n(item)}
-                                </span>
-                              </el-checkbox>
-                            </div>
-                          );
-                        })}
-                      </el-space>
-                    </el-checkbox-group>
-                  </el-scrollbar>
-                </div>
-              </el-popover>
+                                  <span
+                                    title={transformI18n(item)}
+                                    class="inline-block w-[120px] truncate hover:text-text_color_primary"
+                                  >
+                                    {transformI18n(item)}
+                                  </span>
+                                </el-checkbox>
+                              </div>
+                            );
+                          })}
+                        </el-space>
+                      </el-checkbox-group>
+                    </el-scrollbar>
+                  </div>
+                </el-popover>
+              </div>
+
+              <div v-show={!showColumn.value}>
+                <el-button type="text" onClick={() => onShowColumn()}>
+                  <SettingIcon
+                    class={["w-[16px]", iconClass.value]}
+                    v-tippy={rendTippyProps("列设置")}
+                  />
+                </el-button>
+              </div>
+
               <el-divider direction="vertical" />
 
               <iconifyIconOffline

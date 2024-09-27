@@ -1,5 +1,11 @@
 import type { ECharts } from "echarts";
 import type { TableColumns } from "@pureadmin/table";
+import type {
+  AppServerSideGrid,
+  AppTinyGrid,
+  StGrid
+} from "@/views/components/ag-grid";
+import type { AgGridVue } from "ag-grid-vue3";
 
 /**
  * 全局类型声明，无需引入直接在 `.vue` 、`.ts` 、`.tsx` 文件使用即可获得类型提示
@@ -206,4 +212,11 @@ declare global {
       touched?: boolean;
     };
   }
+
+  type StGridElement<T = any> = ComponentExposed<typeof StGrid<T>>;
+  type TinyGridElement<T> = ComponentExposed<typeof AppTinyGrid<T>>;
+  type ServerSideGridElement<T = any> = ComponentExposed<
+    typeof AppServerSideGrid<T>
+  >;
+  type AgGridElement<T = any> = ComponentExposed<typeof AgGridVue>;
 }
