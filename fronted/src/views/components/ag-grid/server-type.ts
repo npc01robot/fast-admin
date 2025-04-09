@@ -7,7 +7,7 @@ import type {
 
 interface ToolButton {
   label?: string;
-  icon?: string;
+  icon?: string | any;
   name?: string;
   disabled?: boolean | (() => boolean);
   hidden?: boolean;
@@ -38,6 +38,7 @@ interface ILoadRows<RowData> {
   ): Promise<{ rowCount?: number; rowData: RowData[] }>;
 }
 interface ServerSideGridOptions<RowData = any> {
+  showTableBar?: boolean;
   /**
    * 表格名称，用于保存列宽等信息
    */

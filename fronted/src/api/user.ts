@@ -97,3 +97,9 @@ export const getMine = () => {
 export const getMineLogs = (data?: object) => {
   return http.request<ResultTable>("get", "/api/auth/mine-logs", { data });
 };
+
+export const update = (data?: object) => {
+  return http.request<UserResult>("post", `/api/auth/user/update_user/`, {
+    data
+  });
+};

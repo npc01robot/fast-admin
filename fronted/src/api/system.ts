@@ -167,7 +167,7 @@ export const getSystemLogsList = (data?: object) => {
 
 /** 获取系统监控-系统日志-根据 id 查日志详情 */
 export const getSystemLogsDetail = (id?: number) => {
-  return http.request<Result>("get", `/api/atuh/log/${id}/log_detail/`);
+  return http.request<Result>("get", `/api/auth/log/${id}/log_detail/`);
 };
 
 /** 获取角色管理-权限-菜单权限 */

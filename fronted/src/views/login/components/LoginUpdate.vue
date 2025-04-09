@@ -1,21 +1,24 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
 import { ref, reactive } from "vue";
 import Motion from "../utils/motion";
-import { message } from "@/utils/message";
 import { updateRules } from "../utils/rule";
 import type { FormInstance } from "element-plus";
 import { useVerifyCode } from "../utils/verifyCode";
-import { $t, transformI18n } from "@/plugins/i18n";
-import { useUserStoreHook } from "@/store/modules/user";
-import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Lock from "@iconify-icons/ri/lock-fill";
 import Iphone from "@iconify-icons/ep/iphone";
+import { message } from "@/utils/message";
+import { useUserStoreHook } from "@/store/modules/user";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import { update } from "@/api/user";
+import User from "@iconify-icons/ri/user-3-fill";
+import { getTopMenu, initRouter } from "@/router/utils";
+import router from "@/router";
 
-const { t } = useI18n();
 const loading = ref(false);
 const ruleForm = reactive({
+  username: "",
   phone: "",
+  email: "",
   verifyCode: "",
   password: "",
   repeatPassword: ""
@@ -26,11 +29,9 @@ const repeatPasswordRule = [
   {
     validator: (rule, value, callback) => {
       if (value === "") {
-        callback(new Error(transformI18n($t("login.purePassWordSureReg"))));
+        callback(new Error("请输入确认密码"));
       } else if (ruleForm.password !== value) {
-        callback(
-          new Error(transformI18n($t("login.purePassWordDifferentReg")))
-        );
+        callback(new Error("两次密码不一致!"));
       } else {
         callback();
       }
@@ -38,20 +39,27 @@ const repeatPasswordRule = [
     trigger: "blur"
   }
 ];
-
 const onUpdate = async (formEl: FormInstance | undefined) => {
   loading.value = true;
   if (!formEl) return;
-  await formEl.validate(valid => {
+  await formEl.validate(async valid => {
     if (valid) {
       // 模拟请求，需根据实际开发进行修改
-      setTimeout(() => {
-        message(transformI18n($t("login.purePassWordUpdateReg")), {
-          type: "success"
-        });
-        loading.value = false;
-      }, 2000);
-    } else {
+      await update({
+        username: ruleForm.username,
+        password: ruleForm.password,
+        phone: ruleForm.phone,
+        email: ruleForm.email
+      }).then(res => {
+        if (res.success) {
+          loading.value = false;
+          onBack();
+          message("修改成功!", { type: "success" });
+        } else {
+          loading.value = false;
+          message("修改失败!请检查注册用户名、电话和邮箱！", { type: "error" });
+        }
+      });
       loading.value = false;
     }
   });
@@ -71,37 +79,34 @@ function onBack() {
     size="large"
   >
     <Motion>
+      <el-form-item prop="username">
+        <el-input
+          v-model="ruleForm.username"
+          clearable
+          placeholder="用户名"
+          :prefix-icon="useRenderIcon(User)"
+        />
+      </el-form-item>
+    </Motion>
+    <Motion>
       <el-form-item prop="phone">
         <el-input
           v-model="ruleForm.phone"
           clearable
-          :placeholder="t('login.purePhone')"
+          placeholder="手机号码"
           :prefix-icon="useRenderIcon(Iphone)"
         />
       </el-form-item>
     </Motion>
 
-    <Motion :delay="100">
-      <el-form-item prop="verifyCode">
-        <div class="w-full flex justify-between">
-          <el-input
-            v-model="ruleForm.verifyCode"
-            clearable
-            :placeholder="t('login.pureSmsVerifyCode')"
-            :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
-          />
-          <el-button
-            :disabled="isDisabled"
-            class="ml-2"
-            @click="useVerifyCode().start(ruleFormRef, 'phone')"
-          >
-            {{
-              text.length > 0
-                ? text + t("login.pureInfo")
-                : t("login.pureGetVerifyCode")
-            }}
-          </el-button>
-        </div>
+    <Motion>
+      <el-form-item prop="email">
+        <el-input
+          v-model="ruleForm.email"
+          clearable
+          placeholder="注册邮箱"
+          :prefix-icon="useRenderIcon('ep:message')"
+        />
       </el-form-item>
     </Motion>
 
@@ -111,7 +116,7 @@ function onBack() {
           v-model="ruleForm.password"
           clearable
           show-password
-          :placeholder="t('login.purePassword')"
+          placeholder="密码"
           :prefix-icon="useRenderIcon(Lock)"
         />
       </el-form-item>
@@ -123,7 +128,7 @@ function onBack() {
           v-model="ruleForm.repeatPassword"
           clearable
           show-password
-          :placeholder="t('login.pureSure')"
+          placeholder="确认密码"
           :prefix-icon="useRenderIcon(Lock)"
         />
       </el-form-item>
@@ -138,7 +143,7 @@ function onBack() {
           :loading="loading"
           @click="onUpdate(ruleFormRef)"
         >
-          {{ t("login.pureDefinite") }}
+          确定
         </el-button>
       </el-form-item>
     </Motion>
@@ -146,7 +151,7 @@ function onBack() {
     <Motion :delay="300">
       <el-form-item>
         <el-button class="w-full" size="default" @click="onBack">
-          {{ t("login.pureBack") }}
+          返回
         </el-button>
       </el-form-item>
     </Motion>

@@ -59,6 +59,7 @@ Object.assign(LicenseManager.prototype, {
 
 <script setup lang="ts" generic="RowData = any">
 import { AgGridVue } from "ag-grid-vue3";
+import { AG_GRID_LOCALE_CN } from "@/views/components/ag-grid/cn";
 
 const props = defineProps({
   name: {
@@ -96,7 +97,11 @@ watch(
  */
 const DEFAULT_OPTIONS = {
   suppressDragLeaveHidesColumns: true,
-  stopEditingWhenCellsLoseFocus: true
+  stopEditingWhenCellsLoseFocus: true,
+  localeText: {
+    ...AG_GRID_LOCALE_CN
+    // 继续添加更多需要翻译的字段
+  }
 };
 
 class GridStorage {

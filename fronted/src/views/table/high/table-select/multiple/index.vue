@@ -61,7 +61,7 @@ const {
               type="date"
               placeholder="请选择日期"
               format="YYYY/MM/DD"
-              value-format="YYYY-MM-D"
+              value-format="YYYY-MM-DD"
             />
           </el-form-item>
           <el-form-item class="float-right !mr-0">

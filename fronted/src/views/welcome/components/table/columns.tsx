@@ -1,10 +1,8 @@
-import { tableData } from "../../data";
 import { delay } from "@pureadmin/utils";
 import { ref, onMounted, reactive } from "vue";
 import type { PaginationProps } from "@pureadmin/table";
-import ThumbUp from "@iconify-icons/ri/thumb-up-line";
-import Hearts from "@iconify-icons/ri/hearts-line";
 import Empty from "./empty.svg?component";
+import { getOneYearLoanData } from "@/api/loan";
 
 export function useColumns() {
   const dataList = ref([]);
@@ -17,56 +15,34 @@ export function useColumns() {
     },
     {
       sortable: true,
-      label: "需求人数",
-      prop: "requiredNumber",
-      filterMultiple: false,
-      filterClassName: "pure-table-filter",
-      filters: [
-        { text: "≥16000", value: "more" },
-        { text: "<16000", value: "less" }
-      ],
-      filterMethod: (value, { requiredNumber }) => {
-        return value === "more"
-          ? requiredNumber >= 16000
-          : requiredNumber < 16000;
-      }
+      label: "贷款单位",
+      prop: "loan_unit"
     },
     {
       sortable: true,
-      label: "提问数量",
-      prop: "questionNumber"
+      label: "贷款名称",
+      prop: "name"
     },
     {
       sortable: true,
-      label: "解决数量",
-      prop: "resolveNumber"
+      label: "贷款类型",
+      prop: "type"
     },
     {
       sortable: true,
-      label: "用户满意度",
+      label: "贷款金额",
+      prop: "loan_amount"
+    },
+    {
+      sortable: true,
+      label: "借款日期",
       minWidth: 100,
-      prop: "satisfaction",
-      cellRenderer: ({ row }) => (
-        <div class="flex justify-center w-full">
-          <span class="flex items-center w-[60px]">
-            <span class="ml-auto mr-2">{row.satisfaction}%</span>
-            <iconifyIconOffline
-              icon={row.satisfaction > 98 ? Hearts : ThumbUp}
-              color="#e85f33"
-            />
-          </span>
-        </div>
-      )
+      prop: "loan_date"
     },
     {
       sortable: true,
-      label: "统计日期",
-      prop: "date"
-    },
-    {
-      label: "操作",
-      fixed: "right",
-      slot: "operation"
+      label: "到期日期",
+      prop: "due_date"
     }
   ];
 
@@ -88,9 +64,11 @@ export function useColumns() {
   }
 
   onMounted(() => {
-    dataList.value = tableData;
-    pagination.total = dataList.value.length;
-    loading.value = false;
+    getOneYearLoanData().then(res => {
+      dataList.value = res.data;
+      pagination.total = res.data.length;
+      loading.value = false;
+    });
   });
 
   return {

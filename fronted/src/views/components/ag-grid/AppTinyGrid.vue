@@ -1,6 +1,31 @@
 <template>
   <div class="wrapper">
-    <StGrid class="grid" :name="options.gridName" :grid-options="gridOptions" />
+    <PureTableBar
+      v-if="showTableBar"
+      :title="options.gridName"
+      :showColumn="false"
+      @refresh="reload"
+      @showColumn="showColumnChooser"
+    >
+      <template #buttons>
+        <el-button
+          v-for="button in buttons"
+          :key="button.label"
+          type="primary"
+          :color="button.color"
+          :disabled="button.disabled"
+          :icon="button.icon"
+          @click="clickButton(button)"
+        >
+          {{ button.label }}
+        </el-button>
+      </template>
+      <StGrid
+        class="grid"
+        :name="options.gridName"
+        :grid-options="gridOptions"
+      />
+    </PureTableBar>
   </div>
 </template>
 
@@ -23,8 +48,10 @@ import {
   ToolButton,
   ToolButtonImpl
 } from "@/views/components/ag-grid/tiny-type";
+import { PureTableBar } from "@/components/RePureTableBar";
 
 let api: GridApi | null = null;
+const showTableBar = computed(() => options.showTableBar ?? true);
 
 // 内置功能按钮
 const providedButtons = reactive({
@@ -53,6 +80,7 @@ const defaultGridOptions: GridOptions<RowData> = {
 const props = defineProps<{ options: TinyGridOptions<RowData> }>();
 const options = props.options;
 defineExpose({
+  showTableBar: false,
   search: search,
   saveChanged: saveChanged
 });
@@ -87,7 +115,21 @@ function replaceFunc<T extends Function>(prev: T | undefined, next: T): T {
   };
   return cb as any as T;
 }
-
+const showColumnChooser = () => {
+  api?.showColumnChooser();
+};
+function cleanUp() {
+  changedRows.clear();
+  api?.setServerSideSelectionState({
+    selectAll: false,
+    toggledNodes: []
+  });
+}
+async function reload() {
+  cleanUp();
+  props.options.loadData?.();
+  api?.refreshServerSide({ purge: true });
+}
 const gridOptions = computed(() => {
   const opts = options.gridOptions;
   opts.onGridReady = replaceFunc(opts.onGridReady, onGridReady);

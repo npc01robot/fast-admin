@@ -5,6 +5,7 @@ import LayNotice from "../lay-notice/index.vue";
 import LayNavMix from "../lay-sidebar/NavMix.vue";
 import { useTranslationLang } from "@/layout/hooks/useTranslationLang";
 import LaySidebarFullScreen from "../lay-sidebar/components/SidebarFullScreen.vue";
+import LaySidebarDownload from "../lay-sidebar/components/SidebarDownload.vue";
 import LaySidebarBreadCrumb from "../lay-sidebar/components/SidebarBreadCrumb.vue";
 import LaySidebarTopCollapse from "../lay-sidebar/components/SidebarTopCollapse.vue";
 
@@ -52,41 +53,44 @@ const { t, locale, translationCh, translationEn } = useTranslationLang();
       <!-- 菜单搜索 -->
       <LaySearch id="header-search" />
       <!-- 国际化 -->
-      <el-dropdown id="header-translation" trigger="click">
-        <GlobalizationIcon
-          class="navbar-bg-hover w-[40px] h-[48px] p-[11px] cursor-pointer outline-none"
-        />
-        <template #dropdown>
-          <el-dropdown-menu class="translation">
-            <el-dropdown-item
-              :style="getDropdownItemStyle(locale, 'zh')"
-              :class="['dark:!text-white', getDropdownItemClass(locale, 'zh')]"
-              @click="translationCh"
-            >
-              <IconifyIconOffline
-                v-show="locale === 'zh'"
-                class="check-zh"
-                :icon="Check"
-              />
-              简体中文
-            </el-dropdown-item>
-            <el-dropdown-item
-              :style="getDropdownItemStyle(locale, 'en')"
-              :class="['dark:!text-white', getDropdownItemClass(locale, 'en')]"
-              @click="translationEn"
-            >
-              <span v-show="locale === 'en'" class="check-en">
-                <IconifyIconOffline :icon="Check" />
-              </span>
-              English
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
+      <!--      <el-dropdown id="header-translation" trigger="click">-->
+      <!--        <GlobalizationIcon-->
+      <!--          class="navbar-bg-hover w-[40px] h-[48px] p-[11px] cursor-pointer outline-none"-->
+      <!--        />-->
+      <!--        <template #dropdown>-->
+      <!--          <el-dropdown-menu class="translation">-->
+      <!--            <el-dropdown-item-->
+      <!--              :style="getDropdownItemStyle(locale, 'zh')"-->
+      <!--              :class="['dark:!text-white', getDropdownItemClass(locale, 'zh')]"-->
+      <!--              @click="translationCh"-->
+      <!--            >-->
+      <!--              <IconifyIconOffline-->
+      <!--                v-show="locale === 'zh'"-->
+      <!--                class="check-zh"-->
+      <!--                :icon="Check"-->
+      <!--              />-->
+      <!--              简体中文-->
+      <!--            </el-dropdown-item>-->
+      <!--            <el-dropdown-item-->
+      <!--              :style="getDropdownItemStyle(locale, 'en')"-->
+      <!--              :class="['dark:!text-white', getDropdownItemClass(locale, 'en')]"-->
+      <!--              @click="translationEn"-->
+      <!--            >-->
+      <!--              <span v-show="locale === 'en'" class="check-en">-->
+      <!--                <IconifyIconOffline :icon="Check" />-->
+      <!--              </span>-->
+      <!--              English-->
+      <!--            </el-dropdown-item>-->
+      <!--          </el-dropdown-menu>-->
+      <!--        </template>-->
+      <!--      </el-dropdown>-->
+
+      <!-- 下载 -->
+      <LaySidebarDownload />
       <!-- 全屏 -->
       <LaySidebarFullScreen id="full-screen" />
       <!-- 消息通知 -->
-      <LayNotice id="header-notice" />
+      <!--      <LayNotice id="header-notice" />-->
       <!-- 退出登录 -->
       <el-dropdown trigger="click">
         <span class="el-dropdown-link navbar-bg-hover select-none">

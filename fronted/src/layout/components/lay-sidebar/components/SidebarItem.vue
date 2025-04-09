@@ -186,10 +186,8 @@ function resolvePath(routePath) {
           layout === 'mix' && toRaw(item.meta.icon)
             ? !isCollapse || item?.pathList?.length !== 2
             : !(
-                layout === 'vertical' &&
-                isCollapse &&
-                toRaw(item.meta.icon) &&
-                item.parentId === null
+                (layout === 'vertical' && isCollapse && toRaw(item.meta.icon))
+                // && item.parentId === null
               )
         "
         :tippyProps="{

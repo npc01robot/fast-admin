@@ -186,3 +186,51 @@ export const handleTree = (
   }
   return tree;
 };
+
+/**
+ * @description 构造树型结构数据
+ * @param data 数据源
+ * @returns 追加字段后的树
+ */
+export const handleColumTree = (data: any[]): any => {
+  // 创建一个字典方便根据 id 查找节点
+  const dataMap: { [key: number]: any } = Object.fromEntries(
+    data.map(item => [item.id, item])
+  );
+
+  // 创建缓存以避免重复计算路径
+  const pathCache: { [key: number]: string[] } = {};
+  // 定义一个递归函数，获取节点从根到当前节点的路径
+  function getPath(nodeId: number): any[] {
+    // 如果路径已在缓存中，则直接返回缓存路径
+    if (pathCache[nodeId]) {
+      return pathCache[nodeId];
+    }
+
+    const node = dataMap[nodeId];
+    if (!node) {
+      return [];
+    }
+
+    let path: any[];
+
+    // 根节点直接返回自身路径
+    if (node.parent === null) {
+      path = [node];
+    } else {
+      // 否则递归获取父节点路径，并将当前节点 id 加入路径
+      path = [...getPath(node.parent), node];
+    }
+
+    // 将路径缓存起来以便复用
+    pathCache[nodeId] = path;
+    return path;
+  }
+
+  // 遍历所有节点并生成目标路径字典
+  const pathDict: { [key: number]: number[] } = {};
+  data.forEach(item => {
+    pathDict[item.id] = getPath(item.id);
+  });
+  return pathDict;
+};

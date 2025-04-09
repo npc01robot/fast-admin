@@ -47,7 +47,7 @@ const {
       <el-form-item label="状态：" prop="status">
         <el-select
           v-model="form.status"
-          placeholder="请选择状态"
+          placeholder="请选择"
           clearable
           class="!w-[180px]"
         >

@@ -73,6 +73,7 @@ declare global {
     meta?: CustomizeRouteMeta;
     /** 子路由配置项 */
     children?: Array<RouteChildrenConfigsTable>;
+    props?: any;
   }
 
   /**

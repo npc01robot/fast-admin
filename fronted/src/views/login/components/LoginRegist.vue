@@ -65,7 +65,7 @@ const onUpdate = async (formEl: FormInstance | undefined) => {
             useUserStoreHook()
               .loginByUsername({
                 username: ruleForm.username,
-                password: "admin123"
+                password: ""
               })
               .then(res => {
                 if (res.success) {

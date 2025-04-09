@@ -40,6 +40,7 @@ export function useNav() {
 
   /** 头像（如果头像为空则使用 src/assets/user.jpg ） */
   const userAvatar = computed(() => {
+    console.log(useUserStoreHook());
     return isAllEmpty(useUserStoreHook()?.avatar)
       ? Avatar
       : useUserStoreHook()?.avatar;

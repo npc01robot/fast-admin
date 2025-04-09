@@ -2,7 +2,7 @@ import type { GridApi, GridOptions } from "ag-grid-community";
 
 interface ToolButton {
   label?: string;
-  icon?: string;
+  icon?: Function | string;
   disabled?: boolean | (() => boolean);
   hidden?: boolean;
   color?: string;
@@ -17,6 +17,7 @@ interface ToolButtonImpl extends ToolButton {
 type Buttons = Array<ToolButton | string>;
 
 interface TinyGridOptions<RowData> {
+  showTableBar?: boolean;
   /**
    * 表格名称，用于保存列宽等信息
    */

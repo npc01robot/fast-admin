@@ -47,10 +47,12 @@ setOptions({
       symbol: "none",
       smooth: true,
       color: props.color,
-      lineStyle: {
-        shadowOffsetY: 3,
-        shadowBlur: 7,
-        shadowColor: props.color
+      emphasis: {
+        itemStyle: {
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: props.color
+        }
       }
     }
   ]

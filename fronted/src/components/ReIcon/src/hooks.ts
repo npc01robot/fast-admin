@@ -1,6 +1,8 @@
 import type { iconType } from "./types";
-import { h, defineComponent, type Component } from "vue";
-import { IconifyIconOnline, IconifyIconOffline, FontIcon } from "../index";
+import { type Component, defineComponent, h } from "vue";
+import { FontIcon, IconifyIconOffline, IconifyIconOnline } from "../index";
+import Iconify from "@iconify/iconify";
+import { iconToHTML } from "@iconify/utils";
 
 /**
  * 支持 `iconfont`、自定义 `svg` 以及 `iconify` 中所有的图标
@@ -58,4 +60,25 @@ export function useRenderIcon(icon: any, attrs?: iconType): Component {
       }
     });
   }
+}
+
+export function useDomIcon(icon: any, attrs?: any) {
+  const node = document.createElement("div");
+  node.style.marginLeft = "10px";
+  let iconBody = null;
+  attrs = attrs || {
+    rotate: 0,
+    height: 24,
+    width: 24
+  };
+  if (typeof icon === "string" && Iconify.iconExists(icon)) {
+    iconBody = Iconify.renderSVG(icon, attrs);
+  } else {
+    const svg = iconToHTML(icon.body, attrs);
+    const domParser = document.createElement("div");
+    domParser.innerHTML = svg;
+    iconBody = domParser.childNodes[0];
+  }
+  node.appendChild(iconBody);
+  return node;
 }

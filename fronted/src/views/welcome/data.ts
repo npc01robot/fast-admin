@@ -1,134 +1,179 @@
-import { dayjs, cloneDeep, getRandomIntBetween } from "./utils";
-import GroupLine from "@iconify-icons/ri/group-line";
-import Question from "@iconify-icons/ri/question-answer-line";
-import CheckLine from "@iconify-icons/ri/chat-check-line";
-import Smile from "@iconify-icons/ri/star-smile-line";
+import LineChartFill from "@iconify-icons/ri/line-chart-fill";
+import DonutChartFill from "@iconify-icons/ri/donut-chart-fill";
+import Finance from "@iconify-icons/ri/funds-fill";
+import { getHomeLoanData } from "@/api/loan";
+import { computed, ref } from "vue";
 
-const days = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+const loan_total_amount = ref<any>({
+  total_amount: 0,
+  latest_amount_list: [],
+  bond_issue: 0,
+  bank_loan: 0,
+  one_year_mid_term: 0,
+  long_term_loan: 0,
+  non_standard: 0,
+  credit_loan: 0,
+  project_loan: 0,
+  low_risk_loan: 0,
+  other: 0,
+  percent: 0
+});
+const one_year_amount = ref<any>({
+  total_balance: 0,
+  latest_amount_list: [],
+  bank_loan: 0,
+  non_standard: 0,
+  other: 0,
+  percent: 0
+});
 
-/** 需求人数、提问数量、解决数量、用户满意度 */
-const chartData = [
-  {
-    icon: GroupLine,
-    bgColor: "#effaff",
-    color: "#41b6ff",
-    duration: 2200,
-    name: "需求人数",
-    value: 36000,
-    percent: "+88%",
-    data: [2101, 5288, 4239, 4962, 6752, 5208, 7450] // 平滑折线图数据
-  },
-  {
-    icon: Question,
-    bgColor: "#fff5f4",
-    color: "#e85f33",
-    duration: 1600,
-    name: "提问数量",
-    value: 16580,
-    percent: "+70%",
-    data: [2216, 1148, 1255, 788, 4821, 1973, 4379]
-  },
-  {
-    icon: CheckLine,
-    bgColor: "#eff8f4",
-    color: "#26ce83",
-    duration: 1500,
-    name: "解决数量",
-    value: 16499,
-    percent: "+99%",
-    data: [861, 1002, 3195, 1715, 3666, 2415, 3645]
-  },
-  {
-    icon: Smile,
-    bgColor: "#f6f4fe",
-    color: "#7846e5",
-    duration: 100,
-    name: "用户满意度",
-    value: 100,
-    percent: "+100%",
-    data: [100]
-  }
-];
+const long_term_amount = ref<any>({
+  total_balance: 0,
+  latest_amount_list: [],
+  mid_term: 0,
+  project_loan: 0,
+  bond_issue: 0,
+  non_standard: 0,
+  other: 0,
+  percent: 0
+});
+const one_year_repayment_amount = ref<any>({
+  total_balance: 0,
+  latest_amount_list: [],
+  percent: 0
+});
 
-/** 分析概览 */
-const barChartData = [
-  {
-    requireData: [2101, 5288, 4239, 4962, 6752, 5208, 7450],
-    questionData: [2216, 1148, 1255, 1788, 4821, 1973, 4379]
-  },
-  {
-    requireData: [2101, 3280, 4400, 4962, 5752, 6889, 7600],
-    questionData: [2116, 3148, 3255, 3788, 4821, 4970, 5390]
-  }
-];
+const interest_repay_data = ref<any>({
+  interest_data: [],
+  repay_data: [],
+  date: []
+});
+const chartData = computed(() => {
+  return [
+    {
+      icon: Finance,
+      bgColor: "#effaff",
+      color: "#41b6ff",
+      duration: 2200,
+      name: "融资总额",
+      value: loan_total_amount.value.total_amount,
+      percent: "+" + String(loan_total_amount.value.percent) + "%",
+      data: [...loan_total_amount.value.latest_amount_list], // 平滑折线图数据
+      line: true,
+      dataKey: loan_total_amount.value
+    },
+    {
+      icon: LineChartFill,
+      bgColor: "#fff5f4",
+      color: "#e85f33",
+      duration: 1600,
+      name: "一年期融资余额",
+      value: one_year_amount.value.total_balance,
+      percent: "+" + String(one_year_amount.value.percent) + "%",
+      data: one_year_amount.value.latest_amount_list,
+      dataKey: one_year_amount.value
+    },
+    {
+      icon: LineChartFill,
+      bgColor: "#eff8f4",
+      color: "#26ce83",
+      duration: 1500,
+      name: "中长期融资余额",
+      value: long_term_amount.value.total_balance,
+      percent: "+" + String(long_term_amount.value.percent) + "%",
+      data: [...long_term_amount.value.latest_amount_list],
+      dataKey: long_term_amount.value
+    },
+    {
+      icon: DonutChartFill,
+      bgColor: "#f6f4fe",
+      color: "#7846e5",
+      duration: 100,
+      name: "一年内到期融资金额",
+      value: one_year_repayment_amount.value.total_balance,
+      percent: "+" + String(one_year_repayment_amount.value.percent) + "%",
+      data: [...one_year_repayment_amount.value.latest_amount_list],
+      dataKey: one_year_repayment_amount.value
+    }
+  ];
+});
 
-/** 解决概率 */
-const progressData = [
-  {
-    week: "周一",
-    percentage: 85,
-    duration: 110,
-    color: "#41b6ff"
-  },
-  {
-    week: "周二",
-    percentage: 86,
-    duration: 105,
-    color: "#41b6ff"
-  },
-  {
-    week: "周三",
-    percentage: 88,
-    duration: 100,
-    color: "#41b6ff"
-  },
-  {
-    week: "周四",
-    percentage: 89,
-    duration: 95,
-    color: "#41b6ff"
-  },
-  {
-    week: "周五",
-    percentage: 94,
-    duration: 90,
-    color: "#26ce83"
-  },
-  {
-    week: "周六",
-    percentage: 96,
-    duration: 85,
-    color: "#26ce83"
-  },
-  {
-    week: "周日",
-    percentage: 100,
-    duration: 80,
-    color: "#26ce83"
-  }
-].reverse();
+/** 饼图数据 */
+const pieData = computed(() => {
+  return [
+    {
+      title: "融资总额占比",
+      subtext: "1",
+      data: [
+        { name: "一年期", value: one_year_amount.value.total_balance },
+        { name: "中长期", value: long_term_amount.value.total_balance }
+      ],
+      amount: loan_total_amount.value.total_amount,
+      dataKey: loan_total_amount.value
+    },
+    {
+      title: "一年期融资余额占比",
+      subtext: "2",
+      data: [
+        { name: "银行贷款", value: one_year_amount.value.bank_loan },
+        { name: "非标业务", value: one_year_amount.value.non_standard },
+        { name: "其他", value: one_year_amount.value.other }
+      ],
+      amount: one_year_amount.value.total_balance,
+      dataKey: one_year_amount.value
+    },
+    {
+      title: "中长期融资余额占比",
+      subtext: "2",
+      data: [
+        { name: "中期流贷", value: long_term_amount.value.mid_term },
+        { name: "项目贷款", value: long_term_amount.value.project_loan },
+        { name: "发行债券", value: long_term_amount.value.bond_issue },
+        { name: "非标业务", value: long_term_amount.value.non_standard },
+        { name: "其他", value: long_term_amount.value.other }
+      ],
+      amount: long_term_amount.value.total_balance,
+      dataKey: long_term_amount.value
+    },
+    {
+      title: "融资总额占比",
+      subtext: "1",
+      data: [
+        { name: "发行债券", value: loan_total_amount.value.bond_issue },
+        { name: "银行贷款", value: loan_total_amount.value.bank_loan },
+        {
+          name: "一年期流贷",
+          value: loan_total_amount.value.one_year_mid_term
+        },
+        { name: "中长期贷款", value: loan_total_amount.value.long_term_loan },
+        { name: "非标业务", value: loan_total_amount.value.non_standard },
+        { name: "项目贷款", value: loan_total_amount.value.project_loan },
+        { name: "其他", value: loan_total_amount.value.other }
+      ],
+      amount: loan_total_amount.value.total_amount,
+      dataKey: loan_total_amount.value
+    }
+  ];
+});
 
-/** 数据统计 */
-const tableData = Array.from({ length: 30 }).map((_, index) => {
+const barChartData = computed(() => {
   return {
-    id: index + 1,
-    requiredNumber: getRandomIntBetween(13500, 19999),
-    questionNumber: getRandomIntBetween(12600, 16999),
-    resolveNumber: getRandomIntBetween(13500, 17999),
-    satisfaction: getRandomIntBetween(95, 100),
-    date: dayjs().subtract(index, "day").format("YYYY-MM-DD")
+    date: [...interest_repay_data.value.date],
+    repay: [...interest_repay_data.value.repay_data],
+    interest: [...interest_repay_data.value.interest_data]
   };
 });
 
-/** 最新动态 */
-const latestNewsData = cloneDeep(tableData)
-  .slice(0, 14)
-  .map((item, index) => {
-    return Object.assign(item, {
-      date: `${dayjs().subtract(index, "day").format("YYYY-MM-DD")} ${
-        days[dayjs().subtract(index, "day").day()]
-      }`
-    });
+const getLoanData = () => {
+  getHomeLoanData().then(res => {
+    const data = res.data;
+    loan_total_amount.value = data.loan_total_amount;
+    one_year_amount.value = data.one_year_loan_amount;
+    long_term_amount.value = data.long_term_loan_amount;
+    one_year_repayment_amount.value = data.one_year_repayment_amount;
+    interest_repay_data.value = data.interest_repay_data;
   });
+};
+getLoanData();
 
-export { chartData, barChartData, progressData, tableData, latestNewsData };
+export { chartData, pieData, barChartData };

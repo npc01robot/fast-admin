@@ -1,6 +1,7 @@
 <template>
   <div class="wrapper">
     <PureTableBar
+      v-if="showTableBar"
       :title="options.gridName"
       :showColumn="false"
       @refresh="reload"
@@ -13,7 +14,7 @@
           type="primary"
           :color="button.color"
           :disabled="button.disabled"
-          :icon="useRenderIcon(button.icon)"
+          :icon="button.icon"
           @click="clickButton(button)"
         >
           {{ button.label }}
@@ -25,6 +26,12 @@
         :grid-options="gridOptions"
       />
     </PureTableBar>
+    <StGrid
+      v-else
+      class="grid"
+      :name="options.gridName"
+      :grid-options="gridOptions"
+    />
   </div>
 </template>
 
@@ -111,6 +118,20 @@ const defaultGridOptions: GridOptions<RowData> = {
         filterOptions: ["lessThan", "greaterThan", "inRange"],
         maxNumConditions: 1
       }
+    },
+    date: {
+      width: 100,
+      valueFormatter: params => {
+        return params.value ? dayjs(params.value).format("YYYY-MM-DD") : "";
+      },
+      filter: "agDateColumnFilter",
+      filterParams: {
+        buttons: ["apply", "reset"],
+        closeOnApply: true,
+        defaultOption: "inRange",
+        filterOptions: ["lessThan", "greaterThan", "inRange"],
+        maxNumConditions: 1
+      }
     }
   },
   statusBar: {
@@ -119,7 +140,7 @@ const defaultGridOptions: GridOptions<RowData> = {
         statusPanel: "GridTextStatusComponent",
         align: "left",
         statusPanelParams: {
-          label: "Rows",
+          label: "行数",
           hidden: computed(() => vm.loading),
           value: computed(() => `${vm.rowCount ?? "-"}`)
         }
@@ -139,6 +160,7 @@ const defaultGridOptions: GridOptions<RowData> = {
 
 const props = defineProps<{ options: ServerSideGridOptions<RowData> }>();
 const options = props.options;
+const showTableBar = computed(() => options.showTableBar ?? true);
 const _expose = {
   reload,
   saveChanged,
@@ -208,13 +230,13 @@ const gridOptions = computed(() => {
   });
   const columnDefs = opts.columnDefs ?? [];
   if (!columnDefs.find((n: ColDef) => n.colId === vm.searchParam)) {
-    columnDefs.push({
-      colId: vm.searchParam,
-      hide: true,
-      lockVisible: true,
-      headerName: "搜索关键词",
-      filter: "agTextColumnFilter"
-    });
+    // columnDefs.push({
+    //   colId: vm.searchParam,
+    //   hide: true,
+    //   lockVisible: true,
+    //   headerName: "搜索关键词",
+    //   filter: "agTextColumnFilter"
+    // });
   }
   opts.getContextMenuItems = proxyGetContextMenuItems.bind(
     null,
@@ -443,15 +465,21 @@ function _getFilterParams(filterModel: FilterModel) {
   const params = {} as any;
   const get_date = (date: string | null, fillTime = false) => {
     if (!date) return null;
-    if (fillTime) {
-      date = date.replace("00:00:00", "23:59:59");
-    }
-    return date + "+08:00";
+    date = date.split(" ")[0];
+    // if (fillTime) {
+    //   date = date.replace("00:00:00", "23:59:59");
+    // }
+    // return date + "+08:00";
+    return date;
   };
   for (let [key, filter] of Object.entries(filterModel)) {
     switch (filter.filterType) {
       case "set":
-        params[key] = filter.values;
+        if (filter.values.length === 1) {
+          params[key] = filter.values[0];
+        } else {
+          params[key] = filter.values.join(",");
+        }
         break;
       case "date":
         switch (filter.type) {
