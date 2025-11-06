@@ -6,7 +6,7 @@ export default {
   redirect: "/components/dialog",
   meta: {
     icon: "ep:menu",
-    showLink: false,
+    showLink: true,
     title: $t("menus.pureComponents"),
     rank: components
   },
