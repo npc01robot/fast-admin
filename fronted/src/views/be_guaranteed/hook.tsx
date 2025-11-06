@@ -3,24 +3,24 @@ import type { GridOptions } from "ag-grid-community";
 import EventEmitter from "eventemitter3";
 import type { ServerSideGridOptions } from "@/views/components/ag-grid/server-type";
 import type { ToolButton } from "@/views/components/ag-grid/server-type";
+import {
+  deleteBeGuaranteed,
+  exportBeGuarantee,
+  getBeGuaranteedList
+} from "@/api/guarantee";
 import { useDomIcon, useRenderIcon } from "@/components/ReIcon/src/hooks";
 import AddFill from "@iconify-icons/ep/plus";
 import router from "@/router";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
-import {
-  deleteGuarantee,
-  exportGuarantee,
-  getGuaranteeList
-} from "@/api/guarantee";
 import { message } from "@/utils/message";
 import { columnType } from "@/views/components/ag-grid/columnType";
 import { BasicTypeEnum, getBasicList } from "@/api/basic";
 import { handleColumTree } from "@/utils/tree";
-import { getParams } from "@/views/components/ag-grid/utils";
 import Download from "@iconify-icons/ep/download";
-import EditFill from "@iconify-icons/ri/file-edit-fill";
+import { getParams } from "@/views/components/ag-grid/utils";
 import DeleteFill from "@iconify-icons/ri/delete-bin-fill";
-export function useGuarantee() {
+import EditFill from "@iconify-icons/ri/file-edit-fill";
+export function useBeGuaranteed() {
   const pageSize = ref(30);
   const pageCount = ref(0);
   const componentRef = ref<ServerSideGridElement<any>>();
@@ -39,9 +39,8 @@ export function useGuarantee() {
   const vm = reactive({
     loading: false
   });
-  let gridOptions: GridOptions<any>;
   const cacheGuaranteeTree = ref<any>([]);
-  gridOptions = {
+  const gridOptions: GridOptions<any> = {
     columnTypes: {
       ...columnType,
       guarantee_unit: {
@@ -80,19 +79,19 @@ export function useGuarantee() {
     columnDefs: [
       { field: "id" },
       {
-        field: "be_guaranteed_unit",
-        headerName: "被担保单位名称",
+        field: "guarantee_unit",
+        headerName: "担保单位",
         type: "guarantee_unit"
       },
       {
-        field: "guarantee_unit",
-        headerName: "担保单位",
+        field: "be_guaranteed_unit",
+        headerName: "被担保单位名称",
         type: "guarantee_unit"
       },
       { field: "ownership", headerName: "产权关系" },
       { field: "item", headerName: "担保事项" },
       { field: "sasac_record_amount", headerName: "备案金额", type: "number" },
-      { field: "amount", headerName: "被担保金额", type: "number" },
+      { field: "amount", headerName: "担保金额", type: "number" },
       { field: "start_date", headerName: "起始日期", type: "date" },
       { field: "end_date", headerName: "终止日期", type: "date" },
       { field: "remark", headerName: "备注" }
@@ -112,7 +111,7 @@ export function useGuarantee() {
       const node = params.node;
       return [
         {
-          name: "担保详情",
+          name: "被担保详情",
           disabled: !node?.data?.id,
           icon: useDomIcon(EditFill),
           action: () => {
@@ -128,6 +127,11 @@ export function useGuarantee() {
           }
         }
       ];
+    },
+    onRowDoubleClicked: params => {
+      if (params.data.id) {
+        openNew(String(params.data.id));
+      }
     }
   };
 
@@ -162,7 +166,7 @@ export function useGuarantee() {
   const exportAll = () => {
     const params = getParams(options, true);
     console.log(params);
-    return exportGuarantee({ params: params }).then(() => {
+    return exportBeGuarantee({ params: params }).then(() => {
       message("正在导出，请稍后", { type: "success" });
     });
   };
@@ -177,39 +181,37 @@ export function useGuarantee() {
     }
     const params = getParams(options, true);
     params["ids"] = selectedIds.join(",");
-    return exportGuarantee({ params: params }).then(() => {
+    return exportBeGuarantee({ params: params }).then(() => {
       message("正在导出，请稍后", { type: "success" });
     });
   };
-
   function openNew(id?: string) {
     useMultiTagsStoreHook().handleTags("push", {
-      path: `/guarantee/detail`,
-      name: "GuaranteeDetail",
+      path: `/guarantee/beGuaranteed/detail`,
+      name: "BeGuaranteeDetail",
       meta: {
-        title: `担保详情`,
+        title: `被担保详情`,
         dynamicLevel: 1
       }
     });
     router.push({
-      path: "/guarantee/detail",
+      path: "/guarantee/beGuaranteed/detail",
       query: { id }
     });
   }
 
   function deleteSelected(id: string) {
-    deleteGuarantee(id).then(res => {
+    deleteBeGuaranteed(id).then(res => {
       if (!res || res.success) {
         message("删除成功", { type: "success" });
+        api.reload();
       } else {
         message("删除失败", { type: "error" });
       }
-      api.reload();
     });
   }
-
   async function loadRows(params) {
-    return getGuaranteeList({ params: params }).then(res => {
+    return getBeGuaranteedList({ params: params }).then(res => {
       const rowData = res.data.list;
       const rowCount = res.data.total;
       pageSize.value = res.data.pageSize;
@@ -223,7 +225,7 @@ export function useGuarantee() {
   }
 
   const options: ServerSideGridOptions<any> = {
-    gridName: "对外担保",
+    gridName: "被担保明细",
     gridOptions: gridOptions,
     buttons: buttons,
     loadRows: loadRows

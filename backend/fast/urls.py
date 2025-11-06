@@ -51,10 +51,6 @@ class APIUrls:
 APIUrls.register_urls(
     [
         "external_guarantee.urls",
-        "finance.urls",
-        "basic.urls",
-        "credit.urls",
-        "generics.urls",
     ]
 )
 urlpatterns = [

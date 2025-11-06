@@ -46,9 +46,6 @@ INSTALLED_APPS = [
     "auth_ext",
     "generics",
     "external_guarantee",
-    "finance",
-    "basic",
-    "credit",
 ]
 
 MIDDLEWARE = [
@@ -100,7 +97,7 @@ WSGI_APPLICATION = "fast.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "ybdb",
+        "NAME": "fastadmin",
         "USER": "root",
         "PASSWORD": "roottoor",
         "HOST": "localhost",

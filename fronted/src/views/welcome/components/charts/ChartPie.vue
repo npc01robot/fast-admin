@@ -45,6 +45,7 @@ setOptions({
   },
   tooltip: {
     trigger: "item",
+    position: ["40%","85%"],
     formatter: function (params) {
       if (props.amount === 0) {
         return `${params.name}: ${params.value} (${params.percent.toFixed(2)}%)`;

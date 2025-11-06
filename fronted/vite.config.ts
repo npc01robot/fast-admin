@@ -27,7 +27,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       proxy: {
         "/api": {
           // 这里填写后端地址
-          target: "http://localhost:6000",
+          target: "http://localhost:8000",
           changeOrigin: true,
           rewrite: path => path.replace(/^\/api/, "")
         }

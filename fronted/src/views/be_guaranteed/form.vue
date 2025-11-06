@@ -3,9 +3,10 @@ import { onMounted, ref } from "vue";
 import { formRules } from "@/views/guarantee/rule";
 import { useRoute } from "vue-router";
 import {
+  getBeGuaranteedDetail,
   getGuaranteeDetail,
-  postGuarantee,
-  putGuarantee
+  postBeGuaranteed,
+  putBeGuaranteed
 } from "@/api/guarantee";
 import { message } from "@/utils/message";
 import router from "@/router";
@@ -15,19 +16,20 @@ import { uploadFile } from "@/api/file";
 import { BasicTypeEnum, getBasicTree } from "@/api/basic";
 
 defineOptions({
-  name: "GuaranteeDetail"
+  name: "BeGuaranteeDetail"
 });
 const loading = ref(false);
 const route = useRoute();
 const id = route.query?.id;
 const isEdited = ref(false);
 isEdited.value = !id;
-const title = id ? "担保详情" : "新增担保";
+const title = id ? "被担保详情" : "新增被担保";
 const showRepay = !!id;
+
 const originalFormData = ref({
   id: 0,
-  be_guaranteed_unit: "",
-  be_guaranteed_unit_parent: "",
+  guarantee_unit: "",
+  guarantee_parent: "",
   nature: "",
   ownership: "",
   item: "",
@@ -36,7 +38,7 @@ const originalFormData = ref({
   end_date: "",
   amount: "",
   application_file: "",
-  guarantee_unit: "",
+  be_guaranteed_unit: "",
   group_date: "",
   group_decision_file: "",
   sasac_record_amount: "",
@@ -49,13 +51,13 @@ const uploadRef = ref();
 const application_file = ref("");
 const group_decision_file = ref("");
 const sasac_record_file = ref("");
-const formData = ref({ ...originalFormData.value });
-const getGuaranteeUnitOptions = ref([]);
-const getGuaranteeTypeOptions = ref([]);
+const formData = ref<any>({ ...originalFormData.value });
+const getGuaranteeUnitOptions = ref<any[]>([]);
+const getGuaranteeTypeOptions = ref<any[]>([]);
 onMounted(() => {
   if (id) {
     loading.value = true;
-    getGuaranteeDetail(String(id)).then(res => {
+    getBeGuaranteedDetail(String(id)).then(res => {
       loading.value = false;
       Object.assign(originalFormData.value, res.data);
       Object.assign(formData.value, res.data);
@@ -82,6 +84,7 @@ async function getGuaranteeUnit() {
     BasicTypeEnum.GUARANTEE_TYPE
   );
 }
+// 使用 Object.assign 合并props和默认值
 
 const ruleFormRef = ref();
 
@@ -107,25 +110,25 @@ const onSubmit = () => {
   );
   formData.value.amount = accounting.unformat(formData.value.amount);
   if (id) {
-    putGuarantee({ data: formData.value }, String(id)).then(res => {
+    putBeGuaranteed({ data: formData.value }, String(id)).then(res => {
       if (res && res.success) {
         isEdited.value = false;
         originalFormData.value = { ...formData.value };
-        message("担保信息修改成功", { type: "success" });
-        router.push({ name: "GuaranteeInfo" });
+        message("被担保信息修改成功", { type: "success" });
+        router.push({ name: "BeGuaranteed" });
       } else {
-        message("担保信息修改失败", { type: "error" });
+        message("被担保信息修改失败", { type: "error" });
       }
     });
   } else {
-    postGuarantee({ data: formData.value }).then(res => {
+    postBeGuaranteed({ data: formData.value }).then(res => {
       if (res && res.success) {
         isEdited.value = false;
         originalFormData.value = { ...formData.value };
-        message("担保信息新增成功", { type: "success" });
-        router.push({ name: "GuaranteeInfo" });
+        message("被担保信息新增成功", { type: "success" });
+        router.push({ name: "BeGuaranteed" });
       } else {
-        message("担保信息新增失败", { type: "error" });
+        message("被担保信息新增失败", { type: "error" });
       }
     });
   }
@@ -196,9 +199,10 @@ function handleSasacRecordFileChange(file: any) {
   };
   reader.readAsDataURL(file.raw);
 }
-const download = (url: string) => {
+
+function downloadFile(url: string) {
   window.open(url, "_blank");
-};
+}
 </script>
 
 <template>
@@ -236,9 +240,9 @@ const download = (url: string) => {
       :disabled="!isEdited"
       :inline="true"
     >
-      <el-form-item label="被担保单位">
+      <el-form-item label="担保单位">
         <el-cascader
-          v-model="formData.be_guaranteed_unit"
+          v-model="formData.guarantee_unit"
           :options="getGuaranteeUnitOptions"
           :props="{
             label: 'name',
@@ -247,13 +251,13 @@ const download = (url: string) => {
           }"
           clearable
           filterable
-          placeholder="请选择被担保单位"
+          placeholder="请选择担保单位"
           style="width: 100%"
         />
       </el-form-item>
-      <el-form-item label="被担保单位母公司">
+      <el-form-item label="担保单位母公司">
         <el-cascader
-          v-model="formData.be_guaranteed_unit_parent"
+          v-model="formData.guarantee_parent"
           :options="getGuaranteeUnitOptions"
           :props="{
             label: 'name',
@@ -262,7 +266,7 @@ const download = (url: string) => {
           }"
           clearable
           filterable
-          placeholder="请选择被担保单位母公司"
+          placeholder="请选择担保单位母公司"
           style="width: 100%"
         />
       </el-form-item>
@@ -290,14 +294,14 @@ const download = (url: string) => {
           style="width: 100%"
         />
       </el-form-item>
-      <el-form-item label="担保开始日期">
+      <el-form-item label="被担保开始日期">
         <el-date-picker
           v-model="formData.start_date"
           type="date"
           value-format="YYYY-MM-DD"
         />
       </el-form-item>
-      <el-form-item label="担保结束日期">
+      <el-form-item label="被担保结束日期">
         <el-date-picker
           v-model="formData.end_date"
           type="date"
@@ -310,14 +314,18 @@ const download = (url: string) => {
           :formatter="value => `${accounting.formatMoney(value, '￥', 2)}`"
         />
       </el-form-item>
-      <el-form-item label="担保单位">
+      <el-form-item label="被担保单位">
         <el-cascader
-          v-model="formData.guarantee_unit"
+          v-model="formData.be_guaranteed_unit"
           :options="getGuaranteeUnitOptions"
-          :props="{ label: 'name', value: 'name', emitPath: false }"
+          :props="{
+            label: 'name',
+            value: 'name',
+            emitPath: false
+          }"
           clearable
           filterable
-          placeholder="请选择担保单位"
+          placeholder="请选择被担保单位"
           style="width: 100%"
         />
       </el-form-item>
@@ -350,6 +358,7 @@ const download = (url: string) => {
       <el-form-item label="备注" style="width: 90%">
         <el-input v-model="formData.remark" type="textarea" />
       </el-form-item>
+
       <el-form-item label="申请担保函">
         <el-upload
           ref="uploadRef"
@@ -372,7 +381,7 @@ const download = (url: string) => {
           v-if="application_file"
           plain
           style="margin-left: 1rem; border-color: #409eff; color: #409eff"
-          @click="download(formData.application_file)"
+          @click="downloadFile(formData.value.application_file)"
         >
           下载源文件
         </el-button>
@@ -399,7 +408,7 @@ const download = (url: string) => {
           v-if="group_decision_file"
           plain
           style="margin-left: 1rem; border-color: #409eff; color: #409eff"
-          @click="download(formData.group_decision_file)"
+          @click="downloadFile(formData.value.group_decision_file)"
         >
           下载源文件
         </el-button>
@@ -426,7 +435,7 @@ const download = (url: string) => {
           v-if="sasac_record_file"
           plain
           style="margin-left: 1rem; border-color: #409eff; color: #409eff"
-          @click="download(formData.sasac_record_file)"
+          @click="downloadFile(formData.value.sasac_record_file)"
         >
           下载源文件
         </el-button>

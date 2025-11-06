@@ -55,7 +55,6 @@ const onUpdate = async (formEl: FormInstance | undefined) => {
   await formEl.validate(valid => {
     if (valid) {
       if (checked.value) {
-        // 模拟请求，需根据实际开发进行修改
         signUp(ruleForm).then(res => {
           if (res.success) {
             message(transformI18n($t("login.pureRegisterSuccess")), {
@@ -65,7 +64,7 @@ const onUpdate = async (formEl: FormInstance | undefined) => {
             useUserStoreHook()
               .loginByUsername({
                 username: ruleForm.username,
-                password: ""
+                password: ruleForm.password
               })
               .then(res => {
                 if (res.success) {

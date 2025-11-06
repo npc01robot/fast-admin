@@ -161,9 +161,14 @@ const { isDark } = useDark();
 </template>
 
 <style lang="scss" scoped>
+:deep(.echarts-tooltip) {
+  z-index: 9999 !important;
+}
 :deep(.el-card) {
   --el-card-border-color: none;
-
+  overflow: visible !important; // 关键：取消 overflow: hidden 的默认行为
+  position: relative; // 为子元素层级提供参考
+  z-index: 1; // 卡片本身层级较低，不影响 tooltip
   /* 解决概率进度条宽度 */
   .el-progress--line {
     width: 85%;
