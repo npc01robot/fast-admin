@@ -1,4 +1,4 @@
-import type { ServerSideGridOptions } from "@/views/components/ag-grid/server-type";
+import type { ServerSideGridOptions } from "@/components/ReAgGrid/src/server-type";
 
 export function getParams(
   options: ServerSideGridOptions<any>,

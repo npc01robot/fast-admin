@@ -1,8 +1,8 @@
 import { onMounted, onUnmounted, reactive, ref } from "vue";
 import type { GridOptions } from "ag-grid-community";
 import EventEmitter from "eventemitter3";
-import type { ServerSideGridOptions } from "@/views/components/ag-grid/server-type";
-import type { ToolButton } from "@/views/components/ag-grid/server-type";
+import type { ServerSideGridOptions } from "@/components/ReAgGrid/src/server-type";
+import type { ToolButton } from "@/components/ReAgGrid/src/server-type";
 import {
   deleteBeGuaranteed,
   exportBeGuarantee,
@@ -13,11 +13,11 @@ import AddFill from "@iconify-icons/ep/plus";
 import router from "@/router";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { message } from "@/utils/message";
-import { columnType } from "@/views/components/ag-grid/columnType";
+import { columnType } from "@/components/ReAgGrid/src/columnType";
 import { BasicTypeEnum, getBasicList } from "@/api/basic";
 import { handleColumTree } from "@/utils/tree";
 import Download from "@iconify-icons/ep/download";
-import { getParams } from "@/views/components/ag-grid/utils";
+import { getParams } from "@/components/ReAgGrid/src/utils";
 import DeleteFill from "@iconify-icons/ri/delete-bin-fill";
 import EditFill from "@iconify-icons/ri/file-edit-fill";
 export function useBeGuaranteed() {

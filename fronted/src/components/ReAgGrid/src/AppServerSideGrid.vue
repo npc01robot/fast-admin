@@ -62,11 +62,11 @@ import {
 } from "vue";
 import StGrid from "./StGrid.vue";
 import GridTextStatusComponent from "./GridTextStatusComponent.vue";
-import { ServerSideGridOptions } from "@/views/components/ag-grid/server-type";
+import { ServerSideGridOptions } from "@/components/ReAgGrid/src/server-type";
 import {
   ToolButton,
   ToolButtonImpl
-} from "@/views/components/ag-grid/tiny-type";
+} from "@/components/ReAgGrid/src/tiny-type";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import AddFill from "@iconify-icons/ri/add-circle-line";

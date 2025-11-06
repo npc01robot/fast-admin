@@ -4,7 +4,7 @@ import type {
   AppServerSideGrid,
   AppTinyGrid,
   StGrid
-} from "@/views/components/ag-grid";
+} from "src/components/ReAgGrid";
 import type { AgGridVue } from "ag-grid-vue3";
 
 /**

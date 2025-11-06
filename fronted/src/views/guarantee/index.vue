@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AppServerSideGrid } from "@/views/components/ag-grid";
+import { AppServerSideGrid } from "@/components/ReAgGrid";
 import { useGuarantee } from "@/views/guarantee/hook";
 const { componentRef, options } = useGuarantee();
 </script>

@@ -47,7 +47,7 @@ import {
   TinyGridOptions,
   ToolButton,
   ToolButtonImpl
-} from "@/views/components/ag-grid/tiny-type";
+} from "@/components/ReAgGrid/src/tiny-type";
 import { PureTableBar } from "@/components/RePureTableBar";
 
 let api: GridApi | null = null;

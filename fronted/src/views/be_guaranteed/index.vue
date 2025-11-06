@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { AppServerSideGrid } from "@/views/components/ag-grid";
 import { useBeGuaranteed } from "@/views/be_guaranteed/hook";
+import { AppServerSideGrid } from "@/components/ReAgGrid";
 const { componentRef, options } = useBeGuaranteed();
 </script>
 

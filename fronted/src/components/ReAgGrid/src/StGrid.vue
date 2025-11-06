@@ -59,7 +59,7 @@ Object.assign(LicenseManager.prototype, {
 
 <script setup lang="ts" generic="RowData = any">
 import { AgGridVue } from "ag-grid-vue3";
-import { AG_GRID_LOCALE_CN } from "@/views/components/ag-grid/cn";
+import { AG_GRID_LOCALE_CN } from "@/components/ReAgGrid/src/cn";
 
 const props = defineProps({
   name: {
